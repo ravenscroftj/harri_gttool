@@ -1,0 +1,38 @@
+include mixins.pug
+
+doctype html
+
+html(lang="en", ng-app="app")
+    head
+        meta(charset="utf-8")
+        link(rel="shortcut icon", href="/media/images/favicon.png")
+        title Nino
+
+        base(href="/")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        meta(name="description", content="Search Stuff")
+        meta(name="author", content="Ofir123")
+
+        | {% if config.DEBUG %}
+        // Including livereload in production cause a performance hit for users,
+            so django will not emit the following line if the settings are not set to debug.
+        // buildCfg is provided by gulp and is the same as build.config.js.
+        +script("http://localhost:" + buildCfg.livereloadPort + "/livereload.js?snipver=1")
+        | {% endif %}
+
+        +script("/media/node_modules/angular/angular.js")
+        +script("/media/node_modules/angular-animate/angular-animate.min.js")
+        +script("/media/node_modules/angular-sanitize/angular-sanitize.min.js")
+        +script("/media/node_modules/angular-messages/angular-messages.min.js")
+        +script("/media/node_modules/angular-aria/angular-aria.min.js")
+
+        +script("/media/node_modules/angular-ui-router/release/angular-ui-router.min.js")
+
+        +style("/media/node_modules/angular-material/angular-material.min.css")
+        +script("/media/node_modules/angular-material/angular-material.min.js")
+
+        +style("/media/build/app.css")
+        +script("/media/build/app.js")
+
+    body(ng-cloak, ng-app="app", ng-strict-di, layout="column")
+        #wrapper(ui-view, flex, layout="column")

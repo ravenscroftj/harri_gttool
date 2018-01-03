@@ -1,0 +1,26 @@
+#search
+    md-card#search-card
+        md-toolbar.md-warn
+            .md-toolbar-tools
+                md-button.md-icon-button(aria-label="Back", ui-sref="main")
+                    md-icon(md-svg-icon="/media/images/icons/back.svg")
+                span.md-headline {{ searchVm.title }}
+        md-card-content
+            form(name="searchVm.searchForm", ng-submit="searchVm.searchForm.$valid && searchVm.search()")
+                div(layout="column")
+                    md-input-container.md-block
+                        label Title
+                        input(ng-model="searchVm.title", name="title")
+                        .hint (Hint: Change me!)
+                    md-input-container.md-block
+                        label Term
+                        input(ng-model="searchVm.searchTerm", ng-init="searchVm.searchTerm", name="term", required, nino-autofocus)
+                        div(ng-messages="searchVm.searchForm.term.$error")
+                            div(ng-message="required") Term is required!
+                    md-button.md-raised.md-primary(type="submit" ng-disabled="searchVm.searchForm.$invalid") Search
+            md-list.md-dense(flex, ng-show="searchVm.searchResults.length > 0")
+                md-subheader.md-no-sticky Results
+                md-list-item.md-2-line(ng-repeat="result in searchVm.searchResults")
+                    .md-list-item-text
+                        h3 {{ result.name }}
+                        p(ng-bind-html="result.data")

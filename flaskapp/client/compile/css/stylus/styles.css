@@ -1,0 +1,24 @@
+.no-errors .md-errors-spacer {
+  min-height: 0;
+}
+md-input-container .hint {
+  position: absolute;
+  left: 2px;
+  right: auto;
+  bottom: 7px;
+  font-size: 12px;
+  line-height: 14px;
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+  color: #808080;
+}
+md-input-container .hint.ng-hide,
+md-input-container .hint.ng-enter,
+md-input-container .hint.ng-leave.ng-leave-active {
+  bottom: 26px;
+  opacity: 0;
+}
+md-input-container .hint.ng-leave,
+md-input-container .hint.ng-enter.ng-enter-active {
+  bottom: 7px;
+  opacity: 1;
+}

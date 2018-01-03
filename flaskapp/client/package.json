@@ -1,0 +1,39 @@
+{
+  "name": "nino",
+  "version": "1.0.0",
+  "description": "The coolest boiler-plate out there",
+  "author": "Ofir123",
+  "dependencies": {
+    "angular": "^1.6.1",
+    "angular-animate": "^1.6.1",
+    "angular-sanitize": "^1.6.1",
+    "angular-messages": "^1.6.1",
+    "angular-aria": "^1.6.1",
+    "angular-ui-router": "^0.3.2",
+    "angular-material": "^1.1.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-util": "^3.0.4",
+    "gulp-concat": "^2.6.1",
+    "gulp-stylus": "^2.6.0",
+    "gulp-pug": "^2.0.0",
+    "gulp-livereload": "^3.8.0",
+    "gulp-watch": "^4.3.11",
+    "gulp-plumber": "^1.0.0",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-jshint": "^2.0.4",
+    "gulp-jscs": "^3.0.0",
+    "del": "^2.2.2",
+    "lazypipe": "^0.2.2",
+    "jshint": "^2.9.4"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ofir123/Nino.git"
+  },
+  "license": "MIT"
+}
