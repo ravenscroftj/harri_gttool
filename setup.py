@@ -80,7 +80,9 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['Flask==0.12.2', 'ujson>=1.35'],  # ['peppercorn'],
+    install_requires=['Flask==0.12.2',
+                      'ujson>=1.35',
+                      'Flask_Migrate>=2.1.1'],  # ['peppercorn'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,

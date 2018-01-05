@@ -1,6 +1,5 @@
 from flask import Flask, send_from_directory
-
-
+from .model import db
 def create_app():
     """Create app """
     app = Flask(__name__)
@@ -19,6 +18,9 @@ def create_app():
     from .views import app_views
 
     app.register_blueprint(app_views)
+
+    # register database
+    db.init_app(app)
 
     return app
 
