@@ -82,7 +82,8 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['Flask==0.12.2',
                       'ujson>=1.35',
-                      'Flask_Migrate>=2.1.1'],  # ['peppercorn'],
+                      'Flask_Migrate>=2.1.1',
+                      'flask-restful>=0.3.6'],  # ['peppercorn'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
