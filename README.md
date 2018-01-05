@@ -2,6 +2,8 @@
 
 I got fed up of creating new Flask projects all the time so I made a Boilerplate.
 
+This code is based on [Nino](https://github.com/ofir123/Nino) with a few customisations.
+
 
 ## Requirements
 
