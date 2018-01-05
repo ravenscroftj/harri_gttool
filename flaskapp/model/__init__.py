@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
+from sqlalchemy import or_
+
 db = SQLAlchemy()
 
 
@@ -16,6 +18,21 @@ class NewsArticle(db.Model):
     text = db.Column("content", db.Text(collation="utf8_general_ci"))
 
     publish_date = db.Column(db.DateTime)
+
+    def people(self):
+
+        return Entity.query\
+            .filter(Entity.article_id == self.id)\
+            .filter(Entity.ent_type == "PERSON")\
+            .all()
+
+    def institutions(self):
+        return Entity.query\
+            .filter(Entity.article_id == self.id)\
+            .filter(Entity.ent_type == "ORG")\
+            .filter(or_(Entity.text.like("%university%"),
+                        Entity.text.like("%college%")))\
+            .all()
 
 
 paper_authors = db.Table('paper_authors',
@@ -45,6 +62,9 @@ class ScientificPaper(db.Model):
     authors = db.relationship('AcademicAuthor',
                               secondary=paper_authors,
                               backref=db.backref('papers', lazy=True))
+
+
+
 
 
 
