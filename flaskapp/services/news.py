@@ -1,4 +1,4 @@
-import ujson
+from datetime import datetime
 import spacy
 from flaskapp.model import db, NewsArticle, Entity
 
@@ -14,15 +14,30 @@ def get_nlp():
 
 def list_unpaired_news():
     """Find news articles that do not have a scientific paper pairing"""
-    
+
 
 def import_news_json(news_json):
     """Import news from JSON into database"""
     nlp = get_nlp()
 
+    if(NewsArticle.query
+       .filter(NewsArticle.url == news_json['url'])
+       .count() > 0):
+        print("Skipping article - already exists")
+        return
+
+    if len(news_json['url']) > 254:
+        print("URL too long")
+        return
+
+    # parse date
+
     news = {k:news_json[k] for k in ['title','text','url']}
 
-    news['text'] = news['text'].replace("\\xE2\\x97\\x8F","")
+    if news_json['publish_date'] != None:
+        news['publish_date'] = datetime.strptime(news_json['publish_date'],
+                                             "%Y/%m/%d %H:%M:%S")
+
 
     article = NewsArticle(**news)
     db.session.add(article)

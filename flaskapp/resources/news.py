@@ -6,7 +6,8 @@ from flaskapp.model import db, NewsArticle
 article_fields = {
     "id": fields.Integer(),
     "title": fields.String(),
-    "content": fields.String(attribute='text')
+    "content": fields.String(attribute='text'), 
+    "publish_date": fields.DateTime()
 }
 
 class NewsArticleList(Resource):

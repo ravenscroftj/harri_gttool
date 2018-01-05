@@ -15,6 +15,8 @@ class NewsArticle(db.Model):
 
     text = db.Column("content", db.Text(collation="utf8_general_ci"))
 
+    publish_date = db.Column(db.DateTime)
+
 
 paper_authors = db.Table('paper_authors',
                          db.Column('paper_id', db.Integer,
