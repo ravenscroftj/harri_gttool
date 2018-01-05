@@ -7,4 +7,8 @@ STATIC_FOLDER = os.path.join(PROJECT_FOLDER, 'client')
 TEMPLATE_FOLDER = os.path.join(STATIC_FOLDER, 'build')
 TEMP_FOLDER = r'C:\Temp\Nino' if os.name == 'nt' else '/tmp'
 
+# mysql URL
 SQLALCHEMY_DATABASE_URI="mysql+pymysql://root:my-secret-pw@localhost:3306/harrigt?charset=utf8mb4"
+
+# microsoft academic knowledge graph api key
+MSAKG_KEY = "12345678901234567890123456789012"
