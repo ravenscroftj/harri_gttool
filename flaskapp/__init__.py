@@ -22,8 +22,6 @@ def create_app():
     app.register_blueprint(app_views)
     app.register_blueprint(api_bp)
 
-    print(app.url_map)
-
     # register database
     db.init_app(app)
 
