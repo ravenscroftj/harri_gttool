@@ -6,13 +6,12 @@ from . import config
 app_views = Blueprint('app_views', __name__)
 
 
-@app_views.route('/<path:path>')
+#@app_views.route('/<path:path>')
 @app_views.route('/')
 def hello_world(path=None):
-    print(current_app.config)
-    print(current_app.config['TEMPLATE_FOLDER'])
     app_views.template_folder = current_app.config['TEMPLATE_FOLDER']
     return render_template('index.html', config=config, )
+
 
 
 @app_views.route('/api/search', methods=['POST'])

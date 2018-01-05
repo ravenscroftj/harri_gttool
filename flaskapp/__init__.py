@@ -16,8 +16,13 @@ def create_app():
 
     # register routes and modules
     from .views import app_views
+    from .resources import api_bp
+
 
     app.register_blueprint(app_views)
+    app.register_blueprint(api_bp)
+
+    print(app.url_map)
 
     # register database
     db.init_app(app)
