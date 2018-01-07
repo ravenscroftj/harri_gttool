@@ -2,12 +2,12 @@
   'use strict';
 
   angular
-    .module('app.search', [])
-    .constant('defaultTitle', 'An elegant title...')
-    .controller('SearchController', SearchController);
+    .module('app.news', [])
+    .constant('defaultTitle', 'List News Articles')
+    .controller('NewsController', NewsController);
 
   /* @ngInject */
-  function SearchController($scope, $state, defaultTitle, searchService) {
+  function NewsController($scope, $state, defaultTitle, newsService) {
     var newsVm = this;
 
     newsVm.title = defaultTitle;
@@ -18,6 +18,13 @@
     newsVm.loadFromState = loadFromState;
     newsVm.search = search;
 
+    $scope.newsClick = function(articleID){
+      alert("Article " + articleID)
+      $state.go('.article', {
+        articleID: articleID
+      });
+    }
+
     // When the state changes, the controller will be updated and a search will take place.
     $scope.$on('$stateChangeSuccess', function () {
       newsVm.loadFromState();
@@ -25,14 +32,12 @@
 
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
-      newsVm.searchTerm = $state.params.term;
-      if (newsVm.searchTerm) {
-        searchService.search({
-          'term': newsVm.searchTerm
-        }).then(function (data) {
-          newsVm.searchResults = data;
-        });
-      }
+
+      newsService.getNews().then(function(data){
+        console.log(data);
+        newsVm.newsArticles = data
+      });
+
     }
 
     function search() {

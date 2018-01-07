@@ -12,7 +12,7 @@
       // Components,
       'app.components',
       // Feature modules.
-      'app.chat', 'app.search'
+      'app.chat', 'app.search', 'app.news'
     ])
     .run(setGlobalState);
 

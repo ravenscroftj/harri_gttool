@@ -4,6 +4,8 @@ from sqlalchemy import or_
 
 db = SQLAlchemy()
 
+from urllib.parse import urlparse
+
 
 class NewsArticle(db.Model):
 
@@ -18,6 +20,10 @@ class NewsArticle(db.Model):
     text = db.Column("content", db.Text(collation="utf8_general_ci"))
 
     publish_date = db.Column(db.DateTime)
+
+    @property
+    def hostname(self):
+        return urlparse(self.url).hostname
 
     def people(self):
 

@@ -13,5 +13,6 @@ module.exports = {
     stylus: 'app/**/*.styl',
     compiledCss: 'compile/css/**/*.css'
   },
-  livereloadPort: 35729
+  livereloadPort: 35729,
+  DEBUG: true
 };

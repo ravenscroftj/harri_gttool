@@ -8,6 +8,8 @@ from flaskapp.services.mskg import find_candidate_papers
 article_fields = {
     "id": fields.Integer(),
     "title": fields.String(),
+    "url": fields.String(),
+    "hostname": fields.String(),
     "content": fields.String(attribute='text'),
     "publish_date": fields.DateTime()
 }

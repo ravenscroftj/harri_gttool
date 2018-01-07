@@ -20,6 +20,22 @@
         }
       },
       {
+        state: 'news',
+        config: {
+          url:'/news',
+          templateUrl: '/media/build/news/news.html',
+          controller: 'NewsController as newsVm'
+        }
+      },
+      {
+        state: 'news.article',
+        config: {
+          url:'/{articleID:[0-9]+}',
+          templateUrl: '/media/build/article/article.html',
+          controller: 'ArticleController as newsVm'
+        }
+      },
+      {
         state: 'search',
         config: {
           url: '/search',

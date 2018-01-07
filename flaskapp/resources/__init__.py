@@ -10,7 +10,7 @@ api = Api(api_bp)
 from .news import NewsArticleListResource, NewsArticleCandidatePapers, NewsArticleResource
 from .entities import PersonListResource, InstitutionListResource
 
-api.add_resource(NewsArticleListResource, "/news")
+api.add_resource(NewsArticleListResource, "/news", "/news/")
 api.add_resource(NewsArticleResource, "/news/<string:article_id>")
 api.add_resource(PersonListResource, "/news/<string:article_id>/people")
 api.add_resource(InstitutionListResource, "/news/<string:article_id>/institutions")
