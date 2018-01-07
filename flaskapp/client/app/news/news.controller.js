@@ -9,6 +9,7 @@
   /* @ngInject */
   function NewsController($scope, $state, defaultTitle, newsService) {
     var newsVm = this;
+    $scope.$state = $state;
 
     newsVm.title = defaultTitle;
     newsVm.searchTerm = null;
@@ -19,7 +20,6 @@
     newsVm.search = search;
 
     $scope.newsClick = function(articleID){
-      alert("Article " + articleID)
       $state.go('news.article', {
         articleID: articleID
       });

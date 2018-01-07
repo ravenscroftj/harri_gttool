@@ -1,16 +1,19 @@
 #news
-    md-card#news-card
-      md-toolbar
-          .md-toolbar-tools
-              //md-button.md-icon-button(aria-label="Back", ui-sref="main")
-              //    md-icon(md-svg-icon="/media/images/icons/back.svg")
-              span.md-headline {{ newsVm.title }}
-      md-card-content
-          md-list#newsList
-            md-subheader.md-no-sticky News Articles
-            md-progress-circular(md-mode="indeterminate" ng-show="isLoading")
-            md-list-item.md-3-line(ng-repeat="result in newsVm.newsArticles" ng-click="newsClick(result.id)")
-                .md-list-item-text
-                    h3 {{ result.title }}
-                    h4 {{result.hostname}}
-                    p {{result.publish_date}}
+    md-content(layout="row")
+      md-card#news-card(flex="grow", ng-show="!$state.includes('news.article')")
+        md-toolbar
+            .md-toolbar-tools
+                //md-button.md-icon-button(aria-label="Back", ui-sref="main")
+                //    md-icon(md-svg-icon="/media/images/icons/back.svg")
+                span.md-headline {{ newsVm.title }}
+        md-card-content
+            md-list#newsList
+              md-subheader.md-no-sticky News Articles
+              md-progress-circular(md-mode="indeterminate" ng-show="isLoading")
+              md-list-item.md-3-line(ng-repeat="result in newsVm.newsArticles" ng-click="newsClick(result.id)")
+                  .md-list-item-text
+                      h3 {{ result.title }}
+                      h4 {{result.hostname}}
+                      p {{result.publish_date}}
+
+      ui-view(flex ng-show="$state.includes('news.article')")

@@ -2,45 +2,33 @@
   'use strict';
 
   angular
-    .module('app.news', [])
+    .module('app.news.article', [])
     .constant('defaultTitle', 'News Article Matcher')
     .controller('ArticleController', ArticleController);
 
   /* @ngInject */
   function ArticleController($scope, $state, defaultTitle, newsService) {
-    var newsVm = this;
+    var articleVm = this;
 
-    newsVm.title = defaultTitle;
-    newsVm.searchTerm = null;
-    newsVm.selected = {};
-    newsVm.searchResults = [];
+    articleVm.title = defaultTitle;
 
-    newsVm.loadFromState = loadFromState;
-    newsVm.search = search;
 
-    $scope.newsClick = function(articleID){
-      alert("Article " + articleID)
-    }
+    articleVm.loadFromState = loadFromState;
 
     // When the state changes, the controller will be updated and a search will take place.
     $scope.$on('$stateChangeSuccess', function () {
-      newsVm.loadFromState();
+      articleVm.loadFromState();
     });
 
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
 
-      newsService.getNews().then(function(data){
+      newsService.getArticle($state.params.articleID).then(function(data){
         console.log(data);
-        newsVm.newsArticles = data
+        data.content = data.content.replace(/\n/g,"<br>");
+        $scope.article = data
       });
 
-    }
-
-    function search() {
-      $state.go('search.term', {
-        term: newsVm.searchTerm
-      });
     }
   }
 
