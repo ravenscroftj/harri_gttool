@@ -84,7 +84,9 @@ setup(
                       'ujson>=1.35',
                       'Flask_Migrate>=2.1.1',
                       'flask-restful>=0.3.6',
-                      'fuzzywuzzy>=0.16.0'],  # ['peppercorn'],
+                      'fuzzywuzzy>=0.16.0',
+                      'spacy>=2.0.0',
+                      'pymysql>=0.8.0'],  # ['peppercorn'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
