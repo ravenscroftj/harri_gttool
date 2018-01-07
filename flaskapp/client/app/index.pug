@@ -35,4 +35,13 @@ html(lang="en", ng-app="app")
         +script("/media/build/app.js")
 
     body(ng-cloak, ng-app="app", ng-strict-di, layout="column")
-        #wrapper(ui-view, flex, layout="column")
+        #page(layout="row" ng-cloak flex)
+          md-sidenav#nav.md-sidenav-left(md-component-id="left", md-whiteframe="4",md-is-locked-open="true")
+            header.nav-header
+              md-content(flex, layout-padding, layout="column")
+                h1 Harri GT Tool
+              md-content(flex, layout-padding, layout="column")
+                a(ui-sref="news" ui-sref-active="active") News
+                a(ui-sref="chat" ui-sref-active="active") Chat
+          md-content(flex layout-padding)
+            #wrapper(ui-view, flex, layout="column")

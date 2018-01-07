@@ -16,7 +16,8 @@
         state: 'main',
         config: {
           url: '/',
-          templateUrl: '/media/build/layout/main.html'
+          templateUrl: '/media/build/news/news.html',
+          controller: 'NewsController as newsVm'
         }
       },
       {

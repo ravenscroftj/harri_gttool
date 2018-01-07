@@ -20,7 +20,7 @@
 
     $scope.newsClick = function(articleID){
       alert("Article " + articleID)
-      $state.go('.article', {
+      $state.go('news.article', {
         articleID: articleID
       });
     }
@@ -32,9 +32,9 @@
 
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
-
+      $scope.isLoading = true;
       newsService.getNews().then(function(data){
-        console.log(data);
+        $scope.isLoading = false;
         newsVm.newsArticles = data
       });
 
