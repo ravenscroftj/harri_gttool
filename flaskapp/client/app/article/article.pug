@@ -36,6 +36,15 @@
           span.md-headline Entities
       md-card-content
         md-tabs(md-dynamic-height md-border-bottom)
-          md-tab(label="People")
+          md-tab(label="People", md-on-select="getPeople()")
+            md-list(flex)
+              md-list-item.md-2-line(ng-repeat="person in people")
+                .md-list-item-text
+                  p {{person.text}}
+                
           
-          md-tab(label="Institutions")
+          md-tab(label="Institutions", md-on-select="getInstitutions()")
+            md-list(flex)
+              md-list-item.md-2-line(ng-repeat="inst in insts")
+                .md-list-item-text
+                  p {{inst.text}}

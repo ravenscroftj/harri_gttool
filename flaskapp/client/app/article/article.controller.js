@@ -7,11 +7,12 @@
     .controller('ArticleController', ArticleController);
 
   /* @ngInject */
-  function ArticleController($scope, $state, defaultTitle, newsService) {
+  function ArticleController($scope, $state, $sce, defaultTitle, newsService) {
     var articleVm = this;
 
     articleVm.title = defaultTitle;
 
+    articleVm.articleID = $state.params.articleID;
 
     articleVm.loadFromState = loadFromState;
 
@@ -20,10 +21,32 @@
       articleVm.loadFromState();
     });
 
+    $scope.highlight = function(text, search) {
+      if (!search) {
+          return $sce.trustAsHtml(text);
+      }
+      return $sce.trustAsHtml(text.replace(new RegExp(search, 'gi'), '<span class="highlightedText">$&</span>'));
+    };
+
+    $scope.getPeople = function() {
+      newsService.getPeople(articleVm.articleID).then(function(data){
+        $scope.people=data;
+      });
+    };
+
+    $scope.getInstitutions = function(){
+      newsService.getInstitutions(articleVm.articleID).then(function(data){
+        console.log("Institutions");
+        $scope.insts=data;
+      });
+    };
+
+
+
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
 
-      newsService.getArticle($state.params.articleID).then(function(data){
+      newsService.getArticle(articleVm.articleID).then(function(data){
         console.log(data);
         data.content = data.content.replace(/\n/g,"<br>");
         $scope.article = data
