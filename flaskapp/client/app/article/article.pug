@@ -1,15 +1,32 @@
-#article(layout="columns", layout-padding)
+#article(layout="row", layout-padding)
   
-  md-card#article-card(flex=70)
-      md-toolbar
-          .md-toolbar-tools
-              md-button.md-icon-button(aria-label="Back", ui-sref="news")
-                  md-icon(md-svg-icon="/media/images/icons/back.svg")
-              span.md-headline News Match
-      md-card-content
-          h1 {{article.title}}
-          md-content(flex, layout-padding, layout="columns")
-            .content(ng-bind-html="article.content", flex=70)
+  
+  #card-holder(layout="column", flex=70)
+    md-card#article-card
+        md-toolbar
+            .md-toolbar-tools
+                md-button.md-icon-button(aria-label="Back", ui-sref="news")
+                    md-icon(md-svg-icon="/media/images/icons/back.svg")
+                span.md-headline News Match
+        md-card-content#articleContent
+            h1 {{article.title}}
+            md-content(flex, layout-padding, layout="columns")
+              .content(ng-bind-html="article.content", flex=70)
+    md-card#match-card
+        md-toolbar
+            .md-toolbar-tools
+                span.md-headline Publication Candidates
+        md-card-content
+          md-progress-circular(md-mode="indeterminate" ng-show="loadingCandidates")
+            
+          h3(ng-show="(candidates.length >1 && !loadingCandidates)") No Candidates Found
+          
+          md-list(flex layout="row" ng-show="(candidates.length >1 && !loadingCandidates)")
+            md-list-item.md-3-line.md-long-text(ng-repeat="candidate in candidates")
+              .md-list-item-text
+                h4 candidate.title
+                
+
               
             
   md-content.md-padding(layout="column", flex)  

@@ -11,13 +11,11 @@
     var newsVm = this;
     $scope.$state = $state;
 
+
     newsVm.title = defaultTitle;
-    newsVm.searchTerm = null;
     newsVm.selected = {};
-    newsVm.searchResults = [];
 
     newsVm.loadFromState = loadFromState;
-    newsVm.search = search;
 
     $scope.newsClick = function(articleID){
       $state.go('news.article', {
@@ -33,6 +31,7 @@
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
       $scope.isLoading = true;
+
       newsService.getNews().then(function(data){
         $scope.isLoading = false;
         newsVm.newsArticles = data
@@ -40,11 +39,6 @@
 
     }
 
-    function search() {
-      $state.go('search.term', {
-        term: newsVm.searchTerm
-      });
-    }
   }
 
 })();

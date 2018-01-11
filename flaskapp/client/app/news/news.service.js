@@ -26,6 +26,10 @@
 
       getInstitutions: function(articleID){
         return getData('/api/news/' + articleID + '/institutions')
+      },
+
+      getCandidates: function(articleID){
+        return getData('/api/news/' + articleID + '/candidates')
       }
 
     };
