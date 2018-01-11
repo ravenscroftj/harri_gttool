@@ -1,7 +1,7 @@
 """Entity rest resources"""
 
-from flask_restful import Resource, reqparse, marshal_with, fields
-from flaskapp.model import db, NewsArticle
+from flask_restful import Resource, reqparse, marshal_with, fields, reqparse, marshal
+from flaskapp.model import db, NewsArticle, Entity
 
 
 entity_fields = {
@@ -15,13 +15,21 @@ entity_fields = {
 class PersonListResource(Resource):
     """List people mentioned in news articles"""
 
-    @marshal_with(entity_fields)
     def get(self, article_id):
         article = NewsArticle.query.get(article_id)
 
-        print(article.title, article.people())
+        ap = reqparse.RequestParser()
+        ap.add_argument("grouped", type=bool, default=False)
 
-        return article.people()
+        args = ap.parse_args()
+
+        people = article.people()
+
+        if type(people[0]) is Entity:
+            return marshal(people, entity_fields)
+        else:
+            return { ent:count for ent,count in people}
+
 
 
 class InstitutionListResource(Resource):

@@ -75,7 +75,7 @@ def generate_date_constraint(date, days=60):
                                 upper.strftime(DATE_OUT_FMT))
 
 
-def generate_person_affil_constraint(person,inst=None):
+def generate_person_affil_constraint(person, inst=None):
     """Generate Microsoft knowledge graph person/affiliation constraint"""
 
     if inst is None:
@@ -200,20 +200,19 @@ def find_candidate_papers(news_article):
         people[person.text].append((person.start, person.end))
 
     for inst in news_article.institutions():
-        insts[inst.text].append((inst.start,inst.end))
+        insts[inst.text].append((inst.start, inst.end))
 
     inst_freq, people_freq = find_ent_frequencies(insts, people)
 
     top_people = sorted(people_freq, key=lambda x: people_freq[x], reverse=True)
     top_insts = sorted(inst_freq, key=lambda x: inst_freq[x], reverse=True)
 
-
     all_paper_results = []
     query_combos = []
 
     for inst in top_insts:
         for people in top_people:
-            query_combos.append((people,inst, news_article.publish_date))
+            query_combos.append((people, inst, news_article.publish_date))
 
     for paper_group in map(results_for_person_inst_date, query_combos):
         all_paper_results.extend(paper_group)
@@ -225,4 +224,4 @@ def find_candidate_papers(news_article):
 
     return {"inst_freq": inst_freq,
             "people_freq": people_freq,
-            "doi_paper":doi_paper, "doi2paper":doi2paper}
+            "doi_paper": doi_paper, "doi2paper": doi2paper}

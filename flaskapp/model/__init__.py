@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 db = SQLAlchemy()
 
@@ -25,12 +25,20 @@ class NewsArticle(db.Model):
     def hostname(self):
         return urlparse(self.url).hostname
 
-    def people(self):
+    def people(self, group=False):
 
-        return Entity.query\
-            .filter(Entity.article_id == self.id)\
-            .filter(Entity.ent_type == "PERSON")\
-            .all()
+        if group:
+            q = db.session.query(func.count(Entity.text), Entity.text)\
+                .group_by(Entity.text)\
+                .filter(Entity.article_id == self.id)\
+                .filter(Entity.ent_type == "PERSON")
+
+        else:
+            q = Entity.query\
+                .filter(Entity.article_id == self.id)\
+                .filter(Entity.ent_type == "PERSON")
+
+        return q.all()
 
     def institutions(self):
         return Entity.query\
