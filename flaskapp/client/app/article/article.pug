@@ -25,6 +25,7 @@
           
           md-list(flex layout="column" ng-show="(candidates.length > 0 && !loadingCandidates)")
             md-list-item.md-3-line.md-long-text(ng-click="viewCandidate(candidate)" ng-repeat="candidate in candidates")
+              md-icon(md-svg-icon="/media/images/icons/link.svg" ng-show="candidate.linked")
               .md-list-item-text
                 h3 {{candidate.Ti|uppercase}}
                 h4 

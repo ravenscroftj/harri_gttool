@@ -18,12 +18,18 @@
 
       linkCandidate: linkCandidate,
 
+      unlinkCandidate: unlinkCandidate,
+
       getArticle: function(articleID){
         return getData('/api/news/' + articleID)
       },
 
       getPeople: function(articleID){
         return getData('/api/news/' + articleID + '/people')
+      },
+
+      getLinkedArticles: function(articleID){
+        return getData('/api/news/' + articleID + '/links')
       },
 
       getInstitutions: function(articleID){
@@ -36,6 +42,16 @@
 
     };
 
+    function unlinkCandidate(article, candidate) {
+      return $http.delete('/api/news/' + article.id + '/links/' + encodeURI(candidate.linked_id))
+      .catch(function (error){
+        $log.error('XHR failed for save link ' + error.data);
+      });
+    }
+
+    /**
+    * Make an API call to link a news article to a candidate paper
+    */
     function linkCandidate(article, candidate){
         return $http.post('/api/news/' + article.id + '/links', {
           "candidate_doi": candidate.doi

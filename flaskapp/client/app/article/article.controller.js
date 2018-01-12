@@ -65,6 +65,7 @@
       var promise = Promise.resolve()
       if(candidate.linked){
 
+        promise = newsService.unlinkCandidate(article, candidate)
 
       }else{
 
@@ -72,15 +73,25 @@
 
       }
 
-        promise.then(function(data){
+        promise.then(function(response){
 
-              $scope.candidate.linked = candidate.linked;
+            if(response.data.hasOwnProperty("id")){
+                candidate.linked = true;
+                candidate.linked_id = response.data.id
+            }else{
+              candidate.linked = false;
+            }
+            console.log(response.data);
+            console.log(candidate);
 
-              for(var i; i<$scope.candidates.length; i++){
-                if ($scope.candidates[i].doi == candidate.doi){
-                  $scope.candidates[i].linked=true;
-                }
+            $scope.candidate.linked = candidate.linked;
+
+            for(var i; i<$scope.candidates.length; i++){
+              if ($scope.candidates[i].doi == candidate.doi){
+                $scope.candidates[i].linked=candidate.linked;
+                $scope.candidates[i].linked_id=candidate.linked_id;
               }
+            }
 
         });
 
@@ -99,7 +110,7 @@
 
       newsService.getCandidates(articleVm.articleID)
         .then(function(data){
-          $scope.loadingCandidates = false;
+
 
           var candidates = [];
 
@@ -118,8 +129,25 @@
 
           $scope.candidates = candidates;
           $scope.candidateCount = candidates.length;
-          console.log($scope.candidates);
-        });
+
+        }).then(newsService.getLinkedArticles(articleVm.articleID)
+            .then(function(data){
+
+              for(var i=0;i<data.length;i++){
+                console.log(data[i]);
+
+                for(var j=0;j<$scope.candidates.length;j++){
+                  if($scope.candidates[j].doi == data[i].doi){
+                    $scope.candidates[j].linked=true;
+                    $scope.candidates[j].linked_id = data[i].id;
+                  }
+                }
+              }
+
+              //we're only done loading candidates once we get to this point
+              $scope.loadingCandidates = false;;
+          })
+      );
 
     }
   }
