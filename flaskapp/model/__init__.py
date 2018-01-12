@@ -7,6 +7,27 @@ db = SQLAlchemy()
 from urllib.parse import urlparse
 
 
+# pivot table definitions
+
+paper_authors = db.Table('paper_authors',
+                         db.Column('paper_id', db.Integer,
+                                   db.ForeignKey('papers.paper_id'),
+                                   primary_key=True),
+                         db.Column('author_id', db.Integer,
+                                   db.ForeignKey('authors.author_id'),
+                                   primary_key=True)
+                         )
+
+news_paper_links = db.Table('article_papers',
+                            db.Column('article_id', db.Integer,
+                                      db.ForeignKey('articles.article_id'),
+                                      primary_key=True),
+                            db.Column('paper_id', db.Integer,
+                                      db.ForeignKey('papers.paper_id'),
+                                      primary_key=True)
+                            )
+
+
 class NewsArticle(db.Model):
 
     __tablename__ = "articles"
@@ -20,6 +41,10 @@ class NewsArticle(db.Model):
     text = db.Column("content", db.Text(collation="utf8_general_ci"))
 
     publish_date = db.Column(db.DateTime)
+
+    papers = db.relationship('ScientificPaper',
+                             secondary=news_paper_links,
+                             backref=db.backref('articles', lazy=True))
 
     @property
     def hostname(self):
@@ -49,16 +74,6 @@ class NewsArticle(db.Model):
             .all()
 
 
-paper_authors = db.Table('paper_authors',
-                         db.Column('paper_id', db.Integer,
-                                   db.ForeignKey('papers.paper_id'),
-                                   primary_key=True),
-                         db.Column('author_id', db.Integer,
-                                   db.ForeignKey('authors.author_id'),
-                                   primary_key=True)
-                         )
-
-
 class ScientificPaper(db.Model):
     """Scientific papers as potential matches to articles"""
 
@@ -78,10 +93,6 @@ class ScientificPaper(db.Model):
                               backref=db.backref('papers', lazy=True))
 
 
-
-
-
-
 class AcademicAuthor(db.Model):
     """Authors of papers"""
 
@@ -90,8 +101,6 @@ class AcademicAuthor(db.Model):
     id = db.Column("author_id", db.Integer, primary_key=True)
 
     fullname = db.Column("fullname", db.String(255))
-
-
 
 
 class Entity(db.Model):
