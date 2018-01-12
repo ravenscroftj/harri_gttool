@@ -102,6 +102,8 @@ class AcademicAuthor(db.Model):
 
     fullname = db.Column("fullname", db.String(255))
 
+    institution = db.Column("Institution", db.String(255))
+
 
 class Entity(db.Model):
     """Entity represents a named entity found in a news article"""

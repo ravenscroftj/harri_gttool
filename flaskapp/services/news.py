@@ -1,6 +1,10 @@
 from datetime import datetime
+
 import spacy
-from flaskapp.model import db, NewsArticle, Entity
+
+from flaskapp.model import Entity, NewsArticle, db, ScientificPaper, AcademicAuthor
+
+from .mskg import find_candidate_papers
 
 _nlp = None
 
@@ -11,9 +15,72 @@ def get_nlp():
 
     return _nlp
 
+class NoSuchCandidateException(Exception):
+    """Exception class that handles a lack of paper candidate"""
+    pass
 
 def list_unpaired_news():
     """Find news articles that do not have a scientific paper pairing"""
+
+
+def generate_paper_from_mskg(candidate, doi):
+    """Given an MSKG json, create ScientificPaper record and Authors"""
+
+    paper = ScientificPaper(title=candidate['Ti'],
+                            pubdate=datetime.strptime(candidate['D'],
+                                                      "%Y-%m-%d"),
+                            doi=doi)
+
+    db.session.add(paper)
+
+    for author in candidate['AA']:
+
+        name = author['AuN']
+        inst = author['AfN']
+
+        arec = AcademicAuthor.query\
+            .filter(AcademicAuthor.fullname == name)\
+            .filter(AcademicAuthor.institution == inst).first()
+
+        if arec is None:
+            arec = AcademicAuthor(fullname=name, institution=inst)
+            db.session.add(arec)
+
+        paper.authors.append(arec)
+
+    db.session.commit()
+
+    return paper
+
+
+
+def link_news_candidate(article, doi):
+    """Link an article to a given doi"""
+
+    # check to see if paper already in db
+    paper = ScientificPaper.query.filter(ScientificPaper.doi == doi).first()
+
+    if paper is None:
+        # if no paper was found we need to create one
+
+        candidate_result = find_candidate_papers(article)
+
+        found_match = False
+        for cdoi, candidate in candidate_result['doi2paper'].items():
+
+            if cdoi == doi:
+                paper = generate_paper_from_mskg(candidate, cdoi)
+                found_match = True
+                break
+
+        # if we got to end of for loop without finding doi, throw error
+        if not found_match:
+            raise NoSuchCandidateException("Could not find candidate with doi={}".format(doi))
+
+    # now we create the link
+    article.papers.append(paper)
+
+    db.session.commit()
 
 
 def import_news_json(news_json):
