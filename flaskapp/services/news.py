@@ -82,6 +82,8 @@ def link_news_candidate(article, doi):
 
     db.session.commit()
 
+    return paper
+
 
 def import_news_json(news_json):
     """Import news from JSON into database"""
