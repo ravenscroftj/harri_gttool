@@ -1,5 +1,6 @@
 """Service for calling microsoft knowledge graph"""
 
+import os
 import math
 import requests
 import ujson as json
@@ -192,6 +193,19 @@ def results_for_person_inst_date(query):
 def find_candidate_papers(news_article):
     """Find candidate scientific paper matches for given news article"""
 
+    cachedir = current_app.config['CACHE_DIR']
+    candidate_cache = os.path.join(cachedir, "candidates")
+
+    if not os.path.exists(candidate_cache):
+        os.makedirs(candidate_cache)
+
+    cache_file = os.path.join(candidate_cache,
+                              "{}.json".format(news_article.id))
+
+    if os.path.exists(cache_file):
+        with open(cache_file) as f:
+            return json.load(f)
+
     # find people and institutions
     people = defaultdict(lambda: [])
     insts = defaultdict(lambda: [])
@@ -222,6 +236,11 @@ def find_candidate_papers(news_article):
                                          people_freq,
                                          inst_freq)
 
-    return {"inst_freq": inst_freq,
+    result = {"inst_freq": inst_freq,
             "people_freq": people_freq,
             "doi_paper": doi_paper, "doi2paper": doi2paper}
+
+    with open(cache_file,"w") as f:
+        json.dump(result, f)
+
+    return result

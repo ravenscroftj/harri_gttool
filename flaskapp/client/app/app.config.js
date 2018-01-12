@@ -6,8 +6,11 @@
     .config(config);
 
   /* @ngInject */
-  function config($compileProvider) {
+  function config($compileProvider, $mdThemingProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|https):/);
+
+    $mdThemingProvider.theme('successTheme')
+    .primaryPalette('green');
   }
 
 })();

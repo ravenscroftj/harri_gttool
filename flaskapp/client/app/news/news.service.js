@@ -10,11 +10,13 @@
 
     var newsService = this;
 
-    this.cache = {}
+    this.cache = {};
 
     return {
 
       getNews: getNews,
+
+      linkCandidate: linkCandidate,
 
       getArticle: function(articleID){
         return getData('/api/news/' + articleID)
@@ -33,6 +35,15 @@
       }
 
     };
+
+    function linkCandidate(article, candidate){
+        return $http.post('/api/news/' + article.id + '/links', {
+          "candidate_doi": candidate.doi
+        })
+        .catch(function (error){
+          $log.error('XHR failed for save link ' + error.data);
+        });
+    }
 
     function getData(url) {
       if(newsService.cache[url]){

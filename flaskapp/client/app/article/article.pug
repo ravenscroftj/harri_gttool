@@ -12,22 +12,87 @@
             h1 {{article.title}}
             md-content(flex, layout-padding, layout="columns")
               .content(ng-bind-html="article.content", flex=70)
-    md-card#match-card
+                
+    // candidate matcher panel - hidden when individual candidate is shown
+    md-card#match-card(ng-show="showCandidatesView")
         md-toolbar
             .md-toolbar-tools
                 span.md-headline Publication Candidates
         md-card-content
           md-progress-circular(md-mode="indeterminate" ng-show="loadingCandidates")
             
-          h3(ng-show="(candidates.length >1 && !loadingCandidates)") No Candidates Found
+          h3(ng-show="(candidateCount < 1) && !loadingCandidates") No Candidates Found
           
-          md-list(flex layout="row" ng-show="(candidates.length >1 && !loadingCandidates)")
-            md-list-item.md-3-line.md-long-text(ng-repeat="candidate in candidates")
+          md-list(flex layout="column" ng-show="(candidates.length > 0 && !loadingCandidates)")
+            md-list-item.md-3-line.md-long-text(ng-click="viewCandidate(candidate)" ng-repeat="candidate in candidates")
               .md-list-item-text
-                h4 candidate.title
+                h3 {{candidate.Ti|uppercase}}
+                h4 
+                p Score {{candidate.score}}
                 
-
+    // single candidate view
+    md-card#match-card(ng-show="showCandidateInfo", md-theme="{{candidate.linked ? 'successTheme' : 'default'}}")
+        md-toolbar
+            .md-toolbar-tools
+              md-button.md-icon-button(aria-label="Back", ng-click="closeCandidateInspector()")
+                  md-icon(md-svg-icon="/media/images/icons/back.svg")
+                    
+              span.md-headline Candidate Inspector
+        md-card-content(layout="column")
+          
+          // show article title first
+          h3 {{candidate.Ti|uppercase}}
+          
+          
+          md-content(layout="row")
+            // -- authors list ---//
+            div(flex=50 layout="column")
+              md-toolbar.md-hue-3(layout="row")
+                div.md-toolbar-tools
+                  span Authors
+                  
+              md-list(flex="50" layout="column")
+                
+                md-list-item.md-2-line(ng-repeat="author in candidate.AA")
+                  .md-list-item-text
+                    h4 {{author.AuN}}
+                    p {{author.AfN}}
+            
+            // -- other properties of candidate --//
+            div(flex=50 layout="column")
+              md-toolbar.md-hue-3(layout="row")
+                div.md-toolbar-tools
+                  span Properties
+              md-list(flex layout="column")
+                    
+                // -- score of candidate
+                md-list-item.md-2-line
+                  .md-list-item-text
+                    h4 score
+                    p {{candidate.score}}
+                    
+                // -- publication date
+                md-list-item.md-2-line
+                  .md-list-item-text
+                    h4 Publication Date
+                    p {{candidate.D}}
+                    
+                // -- journal name
+                md-list-item.md-2-line
+                  .md-list-item-text
+                    h4 Journal
+                    p {{candidate.J.JN}}
               
+                // --doi
+                md-list-item.md-2-line
+                  .md-list-item-text
+                    h4 DOI
+                    a(href="http://dx.doi.org/{{candidate.doi}}", target="_new") {{candidate.doi}}
+                    
+          // buttons for accepting or 
+          section(layout="row", layout-wrap, layout-align="center center")
+            md-button.md-raised(class="{{candidate.linked? 'md-warn' : 'md-primary'}}", ng-click="candidateLinkToggle(article, candidate)") {{candidate.linked ? "Unlink Candidate From Article" : "Link Candidate to Article"}}
+          
             
   md-content.md-padding(layout="column", flex)  
   
