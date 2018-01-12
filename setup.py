@@ -86,7 +86,8 @@ setup(
                       'flask-restful>=0.3.6',
                       'fuzzywuzzy>=0.16.0',
                       'spacy>=2.0.0',
-                      'pymysql>=0.8.0'],  # ['peppercorn'],
+                      'pymysql>=0.8.0',
+                      'python-Levenshtein>=0.12.0'],  # ['peppercorn'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
