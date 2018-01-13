@@ -41,8 +41,8 @@ html(lang="en", ng-app="app")
               md-content(flex, layout-padding, layout="column")
                 h1 Harri GT Tool
               md-content(flex, layout-padding, layout="column")
-                a(ui-sref="news" ui-sref-active="active") News
-                a(ui-sref="news.linked" ui-sref-active="active") Linked News
-                a(ui-sref="news.hidden" ui-sref-active="active") Hidden News
+                a(ui-sref="news({page:1})" ui-sref-active="active") News
+                a(ui-sref="news.linked({page:1})" ui-sref-active="active") Linked News
+                a(ui-sref="news.hidden({page:1})" ui-sref-active="active") Hidden News
           md-content(flex layout-padding)
             #wrapper(ui-view, flex, layout="column")

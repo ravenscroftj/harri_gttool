@@ -6,7 +6,7 @@
                 //md-button.md-icon-button(aria-label="Back", ui-sref="main")
                 //    md-icon(md-svg-icon="/media/images/icons/back.svg")
                 span.md-headline {{ newsVm.title }}
-        md-card-content
+        md-card-content(layout="column")
             md-list#newsList
               md-subheader.md-no-sticky News Articles
               md-progress-circular(md-mode="indeterminate" ng-show="isLoading")
@@ -15,5 +15,10 @@
                       h3 {{ result.title }}
                       h4 {{result.hostname}}
                       p {{result.publish_date}}
+                      
+            section(flex, layout="row" layout-padding, layout-align="center center")
+                md-button.md-raised(ng-click="previousPage()" ng-disabled="$state.params.page<2") Previous Page
+
+                md-button.md-raised(ng-click="nextPage()") Next Page
 
       ui-view(flex ng-show="$state.includes('news.article')")

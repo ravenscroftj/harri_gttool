@@ -23,9 +23,15 @@
       {
         state: 'news',
         config: {
-          url:'/news',
+          url:'/news?page',
           templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm'
+          controller: 'NewsController as newsVm',
+          params:{
+            page: {
+              value: '1',
+              squash:true
+            }
+          }
         }
       },
       {
@@ -33,7 +39,27 @@
         config: {
           url:'/hidden',
           templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm'
+          controller: 'NewsController as newsVm',
+          params:{
+            page: {
+              value: '1',
+              squash:true
+            }
+          }
+        }
+      },
+      {
+        state: 'news.linked',
+        config: {
+          url:'/linked',
+          templateUrl: '/media/build/news/news.html',
+          controller: 'NewsController as newsVm',
+          params:{
+            page: {
+              value: '0',
+              squash:true
+            }
+          }
         }
       },
       {

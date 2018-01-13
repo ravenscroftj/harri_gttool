@@ -107,8 +107,9 @@
     }
 
 
-    function getNews(hidden,linked) {
-      return $http.get('/api/news?hidden=' + hidden + "&linked=" + linked)
+    function getNews(hidden,linked, offset) {
+
+      return $http.get('/api/news?hidden=' + hidden + "&linked=" + linked + "&offset=" + offset)
         .then(function (response) {
           return response.data;
         })

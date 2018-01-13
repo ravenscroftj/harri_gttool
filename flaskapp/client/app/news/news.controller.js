@@ -22,6 +22,22 @@
       });
     }
 
+    $scope.nextPage = function(){
+      $state.go('.', {
+        page: parseInt($state.params.page)+1
+      });
+    }
+
+
+    $scope.previousPage = function(){
+      console.log("HOHGOH")
+      $state.go('.', {
+        page: parseInt($state.params.page)-1
+      });
+    }
+
+
+
     // When the state changes, the controller will be updated and a search will take place.
     $scope.$on('$stateChangeSuccess', function () {
       newsVm.loadFromState();
@@ -31,10 +47,12 @@
     function loadFromState() {
       $scope.hidden = $state.current.name == "news.hidden";
       $scope.linked = $state.current.name == "news.linked";
-      
+
       $scope.isLoading = true;
 
-      newsService.getNews($scope.hidden, $scope.linked).then(function(data){
+      var offset = ($state.params.page-1) * 10;
+
+      newsService.getNews($scope.hidden, $scope.linked, offset).then(function(data){
         $scope.isLoading = false;
         newsVm.newsArticles = data
       });
