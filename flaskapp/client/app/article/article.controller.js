@@ -18,7 +18,7 @@
 
     $scope.candidates = [];
     $scope.hiding = false;
-    $scope.loadingCandidates = false;
+
     $scope.showCandidatesView = true;
     $scope.showCandidateInfo = false;
     $scope.linkingCandidate = false;
@@ -149,6 +149,10 @@
           $scope.candidates = candidates;
           $scope.candidateCount = candidates.length;
 
+
+          //we're only done loading candidates once we get to this point
+          $scope.loadingCandidates = false;
+
         }).then(newsService.getLinkedArticles(articleVm.articleID)
             .then(function(data){
 
@@ -162,9 +166,6 @@
                   }
                 }
               }
-
-              //we're only done loading candidates once we get to this point
-              $scope.loadingCandidates = false;
           })
       );
 

@@ -10,7 +10,6 @@
   function NewsController($scope, $state, defaultTitle, newsService) {
     var newsVm = this;
     $scope.$state = $state;
-
     newsVm.title = defaultTitle;
     newsVm.selected = {};
 
@@ -20,21 +19,38 @@
       $state.go('news.article', {
         articleID: articleID
       });
-    }
+    };
 
     $scope.nextPage = function(){
       $state.go('.', {
         page: parseInt($state.params.page)+1
       });
-    }
+    };
+
+    $scope.hideArticle = function(article) {
+
+      if($scope.hidden){
+        console.log("Unhiding article " + article.id);
+          $scope.isHiding[article.id] = true;
+          newsService.unhideArticle(article).then(function(response){
+            newsVm.loadFromState();
+          })
+      }else{
+        console.log("Hiding article " + article.id);
+          $scope.isHiding[article.id] = true;
+          newsService.hideArticle(article).then(function(response){
+            newsVm.loadFromState();
+          })
+      }
+
+    };
 
 
     $scope.previousPage = function(){
-      console.log("HOHGOH")
       $state.go('.', {
         page: parseInt($state.params.page)-1
       });
-    }
+    };
 
 
 
@@ -45,6 +61,7 @@
 
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
+      $scope.isHiding = {};
       $scope.hidden = $state.current.name == "news.hidden";
       $scope.linked = $state.current.name == "news.linked";
 
