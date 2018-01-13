@@ -17,7 +17,13 @@
         config: {
           url: '/',
           templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm'
+          controller: 'NewsController as newsVm',
+          params:{
+            page: {
+              value: '1',
+              squash:true
+            }
+          }
         }
       },
       {
