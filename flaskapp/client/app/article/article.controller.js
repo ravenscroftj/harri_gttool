@@ -17,27 +17,43 @@
     articleVm.loadFromState = loadFromState;
 
     $scope.candidates = [];
+    $scope.hiding = false;
     $scope.loadingCandidates = false;
     $scope.showCandidatesView = true;
     $scope.showCandidateInfo = false;
+    $scope.linkingCandidate = false;
 
     // When the state changes, the controller will be updated and a search will take place.
     $scope.$on('$stateChangeSuccess', function () {
       articleVm.loadFromState();
     });
 
-    $scope.highlight = function(text, search) {
-      if (!search) {
-          return $sce.trustAsHtml(text);
-      }
-      return $sce.trustAsHtml(text.replace(new RegExp(search, 'gi'), '<span class="highlightedText">$&</span>'));
-    };
-
     $scope.getPeople = function() {
       newsService.getPeople(articleVm.articleID).then(function(data){
         $scope.people=data;
       });
     };
+
+    $scope.articleToggleHidden = function(article){
+
+      var promise = Promise.resolve()
+      $scope.hiding = true;
+
+      if(article.hidden) {
+        //unhide article
+        promise = newsService.unhideArticle(article);
+      }else{
+        //hide article
+        promise = newsService.hideArticle(article);
+      }
+
+      //resolve request then do next thing
+      promise.then(function(response){
+        $scope.article.hidden = response.data.hidden;
+        $scope.hiding = false;
+      });
+
+    }
 
     $scope.getInstitutions = function(){
       newsService.getInstitutions(articleVm.articleID).then(function(data){
@@ -62,6 +78,7 @@
     */
     $scope.candidateLinkToggle = function(article, candidate){
 
+      $scope.linkingCandidate = true;
       var promise = Promise.resolve()
       if(candidate.linked){
 
@@ -93,6 +110,9 @@
               }
             }
 
+            //finished (un)linking process
+            $scope.linkingCandidate = false;
+
         });
 
     }
@@ -110,7 +130,6 @@
 
       newsService.getCandidates(articleVm.articleID)
         .then(function(data){
-
 
           var candidates = [];
 
@@ -145,7 +164,7 @@
               }
 
               //we're only done loading candidates once we get to this point
-              $scope.loadingCandidates = false;;
+              $scope.loadingCandidates = false;
           })
       );
 

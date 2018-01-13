@@ -41,7 +41,7 @@ class NewsArticleListResource(Resource):
         args.hidden = args.hidden == "true"
 
         r = NewsArticle.query\
-            .filter(NewsArticle.hidden==bool(args.hidden))\
+            .filter(NewsArticle.hidden==args.hidden)\
 
         if args.linked == "true":
             r = r.filter(NewsArticle.id.in_(select([news_paper_links.c.article_id])))

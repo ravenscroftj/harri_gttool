@@ -11,7 +11,6 @@
     var newsVm = this;
     $scope.$state = $state;
 
-
     newsVm.title = defaultTitle;
     newsVm.selected = {};
 
@@ -30,9 +29,12 @@
 
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
+      $scope.hidden = $state.current.name == "news.hidden";
+      $scope.linked = $state.current.name == "news.linked";
+      
       $scope.isLoading = true;
 
-      newsService.getNews().then(function(data){
+      newsService.getNews($scope.hidden, $scope.linked).then(function(data){
         $scope.isLoading = false;
         newsVm.newsArticles = data
       });

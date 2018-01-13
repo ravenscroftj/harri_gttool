@@ -20,28 +20,55 @@
 
       unlinkCandidate: unlinkCandidate,
 
+      unhideArticle: unhideArticle,
+
+      hideArticle: hideArticle,
+
       getArticle: function(articleID){
-        return getData('/api/news/' + articleID)
+        return getData('/api/news/' + articleID);
       },
 
       getPeople: function(articleID){
-        return getData('/api/news/' + articleID + '/people')
+        return getData('/api/news/' + articleID + '/people');
       },
 
       getLinkedArticles: function(articleID){
-        return getData('/api/news/' + articleID + '/links')
+        return getData('/api/news/' + articleID + '/links');
       },
 
       getInstitutions: function(articleID){
-        return getData('/api/news/' + articleID + '/institutions')
+        return getData('/api/news/' + articleID + '/institutions');
       },
 
       getCandidates: function(articleID){
-        return getData('/api/news/' + articleID + '/candidates')
+        return getData('/api/news/' + articleID + '/candidates');
       }
 
     };
 
+    /**
+    * Remove hidden flag from given article
+    *
+    */
+    function unhideArticle(article) {
+        return $http.put('/api/news/' + article.id, {
+          "hidden": "false"
+        })
+    }
+
+    /**
+    * Add hidden flag to article
+    */
+    function hideArticle(article) {
+        return $http.put('/api/news/' + article.id, {
+          "hidden": "true"
+        })
+    }
+
+    /**
+    * Remove link between a news article and a paper from database
+    *
+    */
     function unlinkCandidate(article, candidate) {
       return $http.delete('/api/news/' + article.id + '/links/' + encodeURI(candidate.linked_id))
       .catch(function (error){
@@ -80,8 +107,8 @@
     }
 
 
-    function getNews() {
-      return $http.get('/api/news')
+    function getNews(hidden,linked) {
+      return $http.get('/api/news?hidden=' + hidden + "&linked=" + linked)
         .then(function (response) {
           return response.data;
         })

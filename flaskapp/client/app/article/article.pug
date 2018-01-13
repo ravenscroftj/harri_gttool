@@ -19,7 +19,8 @@
             .md-toolbar-tools
                 span.md-headline Publication Candidates
         md-card-content
-          md-progress-circular(md-mode="indeterminate" ng-show="loadingCandidates")
+          section(layout-align="center center", flex, ng-show="loadingCandidates")
+            md-progress-circular(md-mode="indeterminate")
             
           h3(ng-show="(candidateCount < 1) && !loadingCandidates") No Candidates Found
           
@@ -85,34 +86,43 @@
                     p {{candidate.J.JN}}
               
                 // --doi
-                md-list-item.md-2-line
+                md-list-item.md-2-line(ng-show="candidate.doi")
                   .md-list-item-text
                     h4 DOI
                     a(href="http://dx.doi.org/{{candidate.doi}}", target="_new") {{candidate.doi}}
                     
           // buttons for accepting or 
           section(layout="row", layout-wrap, layout-align="center center")
-            md-button.md-raised(class="{{candidate.linked? 'md-warn' : 'md-primary'}}", ng-click="candidateLinkToggle(article, candidate)") {{candidate.linked ? "Unlink Candidate From Article" : "Link Candidate to Article"}}
+            md-button.md-raised(class="{{candidate.linked? 'md-warn' : 'md-primary'}}", 
+                                ng-click="candidateLinkToggle(article, candidate)",
+                                ng-disabled="linkingCandidate") {{candidate.linked ? "Unlink Candidate From Article" : "Link Candidate to Article"}}
+            md-progress-circular(md-mode="indeterminate" ng-show="linkingCandidate")
           
             
-  md-content.md-padding(layout="column", flex)  
+  //side panel for article view
+  md-content.md-padding(layout="column")  
   
-    md-card#information
-      md-card-title
+    md-card#information(layout="column", flex)
+      md-card-title(flex="none")
         md-card-title-text
           span.md-headline Article Information
-      md-card-content
-        md-list(flex)
-          md-list-item.md-2-line
-            .md-list-item-text
-              h3 Publication Date
-              p {{article.publish_date}}
-          md-list-item.md-2-line
-            .md-list-item-text
-              h3 Host Name
-              p {{article.hostname}}
-        
-        
+      md-card-content(layout="column")
+        section(layout="row", layout-wrap, layout-align="center center")
+          md-button.md-raised(ng-click="articleToggleHidden(article)", ng-disabled="hiding")  {{article.hidden ? "Unhide Article" : "Hide Article"}}
+          md-progress-circular(md-mode="indeterminate" ng-show="hiding")
+            
+        div(layout="column", flex)
+          md-list(flex)
+            md-list-item.md-2-line
+              .md-list-item-text
+                h3 Publication Date
+                p {{article.publish_date}}
+            md-list-item.md-2-line
+              .md-list-item-text
+                h3 Host Name
+                p {{article.hostname}}
+
+                
     md-card#entities
       md-card-title
         md-card-title-text
@@ -120,14 +130,14 @@
       md-card-content
         md-tabs(md-dynamic-height md-border-bottom)
           md-tab(label="People", md-on-select="getPeople()")
-            md-list(flex)
+            md-list.entityTab(flex)
               md-list-item.md-2-line(ng-repeat="person in people")
                 .md-list-item-text
                   p {{person.text}}
                 
           
           md-tab(label="Institutions", md-on-select="getInstitutions()")
-            md-list(flex)
+            md-list.entityTab(flex)
               md-list-item.md-2-line(ng-repeat="inst in insts")
                 .md-list-item-text
                   p {{inst.text}}

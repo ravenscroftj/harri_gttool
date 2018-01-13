@@ -29,6 +29,14 @@
         }
       },
       {
+        state: 'news.hidden',
+        config: {
+          url:'/hidden',
+          templateUrl: '/media/build/news/news.html',
+          controller: 'NewsController as newsVm'
+        }
+      },
+      {
         state: 'news.article',
         config: {
           url:'/{articleID:[0-9]+}',
