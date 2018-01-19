@@ -36,7 +36,7 @@ def generate_paper_from_mskg(candidate, doi):
     for author in candidate['AA']:
 
         name = author['AuN']
-        inst = author['AfN']
+        inst = author.get('AfN','Unknown')
 
         arec = AcademicAuthor.query\
             .filter(AcademicAuthor.fullname == name)\
