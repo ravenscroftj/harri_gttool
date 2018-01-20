@@ -38,6 +38,7 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
 
         td = math.sqrt((pdate.timestamp()-date.timestamp())**2) / seconds_in_day
 
+        # if there is no time difference then reward result
         if td == 0:
             td = 0.1
 
@@ -67,6 +68,11 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
             else:
                 doi_paper[ent['Ti']] += score
 
+        if 'DOI' in E:
+            doi_paper[E['DOI']] /= len(ent['AA'])
+        else:
+            doi_paper[ent['Ti']] /= len(ent['AA'])
+            
     return doi2paper, doi_paper
 
 
