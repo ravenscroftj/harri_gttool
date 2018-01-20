@@ -38,6 +38,9 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
 
         td = math.sqrt((pdate.timestamp()-date.timestamp())**2) / seconds_in_day
 
+        if td == 0:
+            td = 0.1
+
 
         if 'DOI' in E:
             print(E['DOI'])
@@ -158,7 +161,11 @@ def get_papers_for_query(q):
     endpoint = "https://westus.api.cognitive.microsoft.com/academic/v1.0/evaluate"
     #endpoint = "https://westus.api.cognitive.microsoft.com/academic/v1.0/interpret"
 
-    return requests.post(endpoint, headers=headers, data=params)
+    result = requests.post(endpoint, headers=headers, data=params)
+
+    print(result.text)
+
+    return result
 
 
 
