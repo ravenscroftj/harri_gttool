@@ -17,13 +17,18 @@
     .run(setGlobalState);
 
   /* @ngInject */
-  function setGlobalState($rootScope, $state, $stateParams) {
+  function setGlobalState($rootScope, $state, $stateParams, $transitions) {
     // It's very handy to add references to $state and $stateParams to the $rootScope
     // so that you can access them from any scope within your applications.For example,
     // <li ng-class="{ active: $state.includes('contacts.list') }"> will set the <li>
     // to active whenever 'contacts.list' or one of its descendants is active.
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams;
+
+    $transitions.onEnter({}, function(transition, state) {
+      console.log('Transition #' + transition.$id + ' Entered ' + state.name);
+    });
+
   }
 
 })();

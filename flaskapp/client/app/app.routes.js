@@ -7,7 +7,23 @@
 
   /* @ngInject */
   function appRun(routerHelper) {
+    console.log("Hello");
     routerHelper.configureStates(getStates(), '/');
+  }
+
+  function defineParams(){
+    return {
+      page: {
+        value: '1',
+        squash:true,
+        //dynamic: true
+      },
+      filter: {
+        value: '',
+        //squash: true,
+        dynamic: true,
+      }
+    };
   }
 
   function getStates() {
@@ -15,73 +31,37 @@
       {
         state: 'main',
         config: {
-          url: '/',
+          url: '/?page&filter',
           templateUrl: '/media/build/news/news.html',
           controller: 'NewsController as newsVm',
-          params:{
-            page: {
-              value: '1',
-              squash:true
-            },
-            filter: {
-              value: '',
-              squash: true
-            }
-          }
+          params: defineParams()
         }
       },
       {
         state: 'news',
         config: {
-          url:'/news?page',
+          url:'/news?page&filter',
           templateUrl: '/media/build/news/news.html',
           controller: 'NewsController as newsVm',
-          params:{
-            page: {
-              value: '1',
-              squash:true
-            },
-            filter: {
-              value: '',
-              squash: true
-            }
-          }
+          params: defineParams()
         }
       },
       {
         state: 'news.hidden',
         config: {
-          url:'/hidden',
+          url:'/hidden?page&filter',
           templateUrl: '/media/build/news/news.html',
           controller: 'NewsController as newsVm',
-          params:{
-            page: {
-              value: '1',
-              squash:true
-            },
-            filter: {
-              value: '',
-              squash: true
-            }
-          }
+          params: defineParams()
         }
       },
       {
         state: 'news.linked',
         config: {
-          url:'/linked',
+          url:'/linked?page&filter',
           templateUrl: '/media/build/news/news.html',
           controller: 'NewsController as newsVm',
-          params:{
-            page: {
-              value: '1',
-              squash:true
-            },
-            filter: {
-              value: '',
-              squash: true
-            }
-          }
+          params: defineParams()
         }
       },
       {
@@ -117,6 +97,8 @@
         }
       }
     ];
+
+    console.log("hello");
   }
 
 })();

@@ -22,6 +22,7 @@
       };
 
       function configureStates(states, otherwisePath) {
+        console.log("Configure router states");
         states.forEach(function(state) {
           $stateProvider.state(state.state, state.config);
         });
