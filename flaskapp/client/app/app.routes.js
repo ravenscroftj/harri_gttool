@@ -22,6 +22,10 @@
             page: {
               value: '1',
               squash:true
+            },
+            filter: {
+              value: '',
+              squash: true
             }
           }
         }
@@ -36,6 +40,10 @@
             page: {
               value: '1',
               squash:true
+            },
+            filter: {
+              value: '',
+              squash: true
             }
           }
         }
@@ -50,6 +58,10 @@
             page: {
               value: '1',
               squash:true
+            },
+            filter: {
+              value: '',
+              squash: true
             }
           }
         }
@@ -62,8 +74,12 @@
           controller: 'NewsController as newsVm',
           params:{
             page: {
-              value: '0',
+              value: '1',
               squash:true
+            },
+            filter: {
+              value: '',
+              squash: true
             }
           }
         }

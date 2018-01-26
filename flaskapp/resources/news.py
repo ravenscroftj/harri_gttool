@@ -19,13 +19,19 @@ article_fields = {
     "hidden": fields.Boolean()
 }
 
+news_envelope = {
+    "total_count": fields.Integer(),
+    "articles": fields.Nested(article_fields)
+}
+
 class NewsArticleListResource(Resource):
     """List news articles stored in tool"""
 
-    @marshal_with(article_fields)
+    @marshal_with(news_envelope)
     def get(self):
 
         parser = reqparse.RequestParser()
+        parser.add_argument('urlfilter', type=str, default="", location='args')
         parser.add_argument('offset', default=0, type=int, location='args')
         parser.add_argument('limit', default=10, type=int, location='args')
         parser.add_argument('hidden', default="false",
@@ -43,12 +49,17 @@ class NewsArticleListResource(Resource):
         r = NewsArticle.query\
             .filter(NewsArticle.hidden==args.hidden)\
 
+        if args.urlfilter != "":
+            r = r.filter(NewsArticle.url.like("%{}%".format(args.urlfilter)))
+
         if args.linked == "true":
             r = r.filter(NewsArticle.id.in_(select([news_paper_links.c.article_id])))
         else:
             r = r.filter(~NewsArticle.id.in_(select([news_paper_links.c.article_id])))
 
-        return r.offset(args.offset).limit(min(args.limit, 100)).all()
+        articles = r.offset(args.offset).limit(min(args.limit, 100)).all()
+
+        return {"total_count": r.count(), "articles": articles}
 
 class NewsArticleResource(Resource):
     """News Article content and metadata"""

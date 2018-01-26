@@ -12,6 +12,7 @@
     $scope.$state = $state;
     newsVm.title = defaultTitle;
     newsVm.selected = {};
+    newsVm.total_count = 0;
 
     newsVm.loadFromState = loadFromState;
 
@@ -20,6 +21,15 @@
         articleID: articleID
       });
     };
+
+    $scope.$watch('newsFilter',function(newVal,oldVal){
+      //do your code
+      console.log(newVal, oldVal);
+      if(newVal !== oldVal) {
+        $state.params.filter = newVal;
+        reloadNews();
+      }
+    });
 
     $scope.nextPage = function(){
       $state.go('.', {
@@ -30,20 +40,21 @@
     $scope.hideArticle = function(article) {
 
       if($scope.hidden){
-        console.log("Unhiding article " + article.id);
+        console.log('Unhiding article ' + article.id);
           $scope.isHiding[article.id] = true;
           newsService.unhideArticle(article).then(function(response){
             newsVm.loadFromState();
-          })
+          });
       }else{
-        console.log("Hiding article " + article.id);
+        console.log('Hiding article ' + article.id);
           $scope.isHiding[article.id] = true;
           newsService.hideArticle(article).then(function(response){
             newsVm.loadFromState();
-          })
+          });
       }
 
     };
+
 
 
     $scope.previousPage = function(){
@@ -64,16 +75,24 @@
       $scope.isHiding = {};
       $scope.hidden = $state.current.name == "news.hidden";
       $scope.linked = $state.current.name == "news.linked";
+      $scope.newsFilter = $state.params.filter;
+
+      reloadNews();
+    }
+
+    function reloadNews(){
+      var offset = ($state.params.page-1) * 10;
+      $scope.offset = offset;
 
       $scope.isLoading = true;
-
-      var offset = ($state.params.page-1) * 10;
-
-      newsService.getNews($scope.hidden, $scope.linked, offset).then(function(data){
+      newsService.getNews($scope.hidden, $scope.linked, offset, $scope.newsFilter).then(function(data){
         $scope.isLoading = false;
-        newsVm.newsArticles = data
+        console.log(data.articles);
+        newsVm.newsArticles = data.articles;
+        newsVm.total_count = data.total_count;
+        $scope.maxOffset = Math.min(offset+10, newsVm.total_count);
+        console.log(Math.min(offset+10, newsVm.total_count))
       });
-
     }
 
   }

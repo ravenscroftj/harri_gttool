@@ -107,10 +107,14 @@
     }
 
 
-    function getNews(hidden,linked, offset) {
+    function getNews(hidden,linked, offset, filter) {
 
-      return $http.get('/api/news?hidden=' + hidden + "&linked=" + linked + "&offset=" + offset)
-        .then(function (response) {
+      return $http.get('/api/news', {"params":{
+        "hidden": hidden,
+        "linked": linked,
+        "offset":  offset,
+        "urlfilter": filter
+      }}).then(function (response) {
           return response.data;
         })
         .catch(function (error) {
