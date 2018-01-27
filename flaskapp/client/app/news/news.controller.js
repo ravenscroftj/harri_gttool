@@ -79,6 +79,12 @@
       $scope.linked = $state.current.name == "news.linked";
       $scope.newsFilter = $state.params.filter;
 
+      if($scope.hidden){
+        newsVm.title = "Hidden Articles";
+      }else if($scope.linked){
+        newsVm.title = "Linked Articles";
+      }
+
       console.log("Load news state", $state.current.name)
 
       reloadNews();
