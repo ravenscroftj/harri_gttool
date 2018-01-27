@@ -47,13 +47,13 @@
         console.log('Unhiding article ' + article.id);
           $scope.isHiding[article.id] = true;
           newsService.unhideArticle(article).then(function(response){
-            newsVm.loadFromState();
+            loadFromState();
           });
       }else{
         console.log('Hiding article ' + article.id);
           $scope.isHiding[article.id] = true;
           newsService.hideArticle(article).then(function(response){
-            newsVm.loadFromState();
+            loadFromState();
           });
       }
 
