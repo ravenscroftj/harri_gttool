@@ -23,11 +23,6 @@
     $scope.showCandidateInfo = false;
     $scope.linkingCandidate = false;
 
-    // When the state changes, the controller will be updated and a search will take place.
-    $scope.$on('$stateChangeSuccess', function () {
-      articleVm.loadFromState();
-    });
-
     $scope.getPeople = function() {
       newsService.getPeople(articleVm.articleID).then(function(data){
         $scope.people=data;
@@ -170,6 +165,9 @@
       );
 
     }
+
+    //load controller when it is opened
+    loadFromState();
   }
 
 })();

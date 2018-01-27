@@ -14,7 +14,11 @@
     newsVm.selected = {};
     newsVm.total_count = 0;
 
-    newsVm.loadFromState = loadFromState;
+    newsVm.$onInit = function(){
+      console.log("init");
+      loadFromState();
+    }
+
 
     $scope.newsClick = function(articleID){
       $state.go('news.article', {
@@ -62,27 +66,20 @@
       });
     };
 
-    $scope.$on('$stateChangeStart', function(){
-      console.log("Change of state");
-    });
-
-    // When the state changes, the controller will be updated and a search will take place.
-    $scope.$on('$stateChangeSuccess', function () {
-      newsVm.loadFromState();
-    });
-
-    $transitions.onEnter({ to: 'news' }, function(transition) {
-      newsVm.loadFromState();
+    $transitions.onEnter({}, function(transition, state){
+      console.log(state);
     });
 
 
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
-      console.log("Load news state")
+
       $scope.isHiding = {};
       $scope.hidden = $state.current.name == "news.hidden";
       $scope.linked = $state.current.name == "news.linked";
       $scope.newsFilter = $state.params.filter;
+
+      console.log("Load news state", $state.current.name)
 
       reloadNews();
     }
@@ -91,17 +88,19 @@
       var offset = ($state.params.page-1) * 10;
       $scope.offset = offset;
 
+      console.log($scope.hidden, $scope.linked);
+
       $scope.isLoading = true;
       newsService.getNews($scope.hidden, $scope.linked, offset, $scope.newsFilter).then(function(data){
         console.log("Got some news");
         $scope.isLoading = false;
-        newsVm.newsArticles = data.articles;
+        $scope.newsArticles = data.articles;
         newsVm.total_count = data.total_count;
         $scope.maxOffset = Math.min(offset+10, newsVm.total_count);
       });
     }
 
-    loadFromState();
+
 
   }
 

@@ -16,7 +16,7 @@
                   label Filter
                   input(ng-model="newsFilter")
               md-progress-circular(md-mode="indeterminate" ng-show="isLoading")
-              md-list-item.md-3-line(ng-repeat="result in newsVm.newsArticles" ng-click="newsClick(result.id)" ng-mouseover="hovering=true", ng-mouseleave="hovering=false")
+              md-list-item.md-3-line(ng-repeat="result in newsArticles" ng-click="newsClick(result.id)" ng-mouseover="hovering=true", ng-mouseleave="hovering=false")
                   .md-list-item-text
                       h3 {{ result.title }}
                       h4 {{result.hostname}}

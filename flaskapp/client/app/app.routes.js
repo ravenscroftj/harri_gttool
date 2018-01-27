@@ -20,7 +20,7 @@
       },
       filter: {
         value: '',
-        //squash: true,
+        squash: true,
         dynamic: true,
       }
     };
