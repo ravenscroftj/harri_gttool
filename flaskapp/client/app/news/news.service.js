@@ -16,6 +16,8 @@
 
       getNews: getNews,
 
+      updateArticle: updateArticle,
+
       linkCandidate: linkCandidate,
 
       unlinkCandidate: unlinkCandidate,
@@ -40,8 +42,15 @@
         return getData('/api/news/' + articleID + '/institutions');
       },
 
-      getCandidates: function(articleID){
-        return getData('/api/news/' + articleID + '/candidates');
+      getCandidates: function(articleID, cached){
+
+        var c = "true";
+
+        if(cached === false){
+          c = "false";
+        }
+
+        return getData('/api/news/' + articleID + '/candidates?cached=' + c);
       }
 
     };
@@ -63,6 +72,12 @@
         return $http.put('/api/news/' + article.id, {
           "hidden": "true"
         })
+    }
+
+    function updateArticle(article) {
+      return $http.put('/api/news/' + article.id, {
+        "publish_date": article.publish_date
+      })
     }
 
     /**

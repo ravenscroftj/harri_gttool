@@ -1,5 +1,7 @@
 """News article rest resources"""
 
+import dateutil.parser
+
 from flask_restful import Resource, abort, fields, marshal_with, reqparse
 from flaskapp.model import NewsArticle, db
 from flaskapp.services.mskg import find_candidate_papers
@@ -78,6 +80,7 @@ class NewsArticleResource(Resource):
 
         parser = reqparse.RequestParser()
         parser.add_argument('hidden', default="false", choices=['true','false'])
+        parser.add_argument('publish_date', default=None)
 
         args = parser.parse_args()
 
@@ -85,6 +88,10 @@ class NewsArticleResource(Resource):
 
         if article is None:
             abort(404)
+
+        if args.publish_date is not None:
+            newdate = dateutil.parser.parse(args.publish_date)
+            article.publish_date = newdate
 
         article.hidden = args.hidden == "true"
 
@@ -158,8 +165,12 @@ class NewsArticleLinksResource(Resource):
 class NewsArticleCandidatePapers(Resource):
     """Candidate papers for news articles"""
 
+    reqparser = reqparse.RequestParser()
+    reqparser.add_argument("cached", type=str, default="true")
 
     def get(self, article_id):
+
+        args = self.reqparser.parse_args()
 
         article = NewsArticle.query.get(article_id)
 
@@ -168,4 +179,6 @@ class NewsArticleCandidatePapers(Resource):
 
         #find_candidate_papers(article)
 
-        return {"candidate":find_candidate_papers(article)}
+        use_cache = args.cached == "true"
+
+        return {"candidate":find_candidate_papers(article, use_cache)}

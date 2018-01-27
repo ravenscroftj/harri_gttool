@@ -22,7 +22,7 @@
           section(layout-align="center center", flex, ng-show="loadingCandidates")
             md-progress-circular(md-mode="indeterminate")
             
-          h3(ng-show="(candidateCount < 1) && !loadingCandidates") No Candidates Found
+          h3(ng-show="(candidateCount < 1) && !loadingCandidates") {{candidateSearchMessage}}
           
           md-list(flex layout="column" ng-show="(candidates.length > 0 && !loadingCandidates)")
             md-list-item.md-3-line.md-long-text(ng-click="viewCandidate(candidate)" ng-repeat="candidate in candidates | orderBy:'score':true")
@@ -102,7 +102,7 @@
   //side panel for article view
   md-content.md-padding(layout="column")  
   
-    md-card#information(layout="column", flex="35", height="300px")
+    md-card#information(layout="column", flex="40", height="400px")
       md-card-title(flex="none")
         md-card-title-text
           span.md-headline Article Information
@@ -115,12 +115,17 @@
           md-list(flex)
             md-list-item.md-2-line
               .md-list-item-text
-                h3 Publication Date
-                p {{article.publish_date}}
+                h3 Publish Date
+                md-datepicker(ng-model="article.publish_date", ng-change="changeArticleDate()")
+                //p {{article.publish_date}}
             md-list-item.md-2-line
               .md-list-item-text
                 h3 Host Name
                 p {{article.hostname}}
+            md-list-item.md-2-line
+              .md-list-item-text
+                h3 Link to Article
+                a(href="{{article.url}}") Full Article
 
                 
     md-card#entities

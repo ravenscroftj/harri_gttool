@@ -72,7 +72,7 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
             doi_paper[E['DOI']] /= len(ent['AA'])
         else:
             doi_paper[ent['Ti']] /= len(ent['AA'])
-            
+
     return doi2paper, doi_paper
 
 
@@ -203,7 +203,7 @@ def results_for_person_inst_date(query):
     return results
 
 
-def find_candidate_papers(news_article):
+def find_candidate_papers(news_article, use_cache=True):
     """Find candidate scientific paper matches for given news article"""
 
     cachedir = current_app.config['CACHE_DIR']
@@ -215,7 +215,7 @@ def find_candidate_papers(news_article):
     cache_file = os.path.join(candidate_cache,
                               "{}.json".format(news_article.id))
 
-    if os.path.exists(cache_file):
+    if os.path.exists(cache_file) and use_cache:
         with open(cache_file) as f:
             return json.load(f)
 
