@@ -3,6 +3,7 @@
 import os
 import math
 import requests
+import hashlib
 import ujson as json
 
 from flask import current_app
@@ -21,7 +22,7 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
 
     people_count = sum(people_freq.values())
     inst_count = sum(inst_freq.values())
-    doi_paper = defaultdict(lambda: 0)
+    doi_paper = defaultdict(lambda: 1)
 
     doi2paper = {}
 
@@ -42,11 +43,18 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
         if td == 0:
             td = 0.1
 
+        doi = ""
 
         if 'DOI' in E:
-            print(E['DOI'])
-            doi2paper[E['DOI']] = ent
+            doi = E['DOI']
+        elif 'Ti' in ent:
+            hash = hashlib.new('sha256')
+            hash.update(ent['Ti'].encode('utf8'))
+            doi = hash.hexdigest()
+        else:
+            print(E)
 
+        doi2paper[doi] = ent
 
         for author in ent['AA']:
 
@@ -63,15 +71,10 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
 
             score = (best_match_name/people_count)+(best_match_inst/inst_count) / td
 
-            if 'DOI' in E:
-                doi_paper[E['DOI']] += score
-            else:
-                doi_paper[ent['Ti']] += score
+            doi_paper[doi] += score
 
-        if 'DOI' in E:
-            doi_paper[E['DOI']] /= len(ent['AA'])
-        else:
-            doi_paper[ent['Ti']] /= len(ent['AA'])
+        if len(ent['AA']) > 0:
+            doi_paper[doi] /= len(ent['AA'])
 
     return doi2paper, doi_paper
 
@@ -195,12 +198,90 @@ def results_for_person_inst_date(query):
         results.extend(ents)
 
     # get crossref results too
-    #ents = get_crossref_results(people, date)
+    #ents = get_crossref_results(person, date)
 
     #if len(ents) > 0:
     #    results.extend(ents)
 
     return results
+
+
+def get_crossref_results(author, pubdate):
+
+    DATE_OUT_FMT = "%Y"
+    lower=pubdate - timedelta(days=0)
+    upper=pubdate + timedelta(days=354)
+
+    filter_text = "from-pub-date:{},until-pub-date:{}".format(lower.strftime(DATE_OUT_FMT),
+                                upper.strftime(DATE_OUT_FMT))
+
+
+    params={
+            "query.author": author,
+            "filter": filter_text
+           }
+
+    r = requests.get("https://api.crossref.org/works", params=params)
+
+    print(params)
+
+    results = []
+    for item in r.json()['message']['items']:
+
+        ent = {}
+
+        if 'title' in item:
+
+            ent['Ti'] = item['title'][0]
+
+            if 'published-online' in item:
+                dparts = item['published-online']['date-parts'][0]
+
+            elif 'published-print' in item:
+                dparts = item['published-print']['date-parts'][0]
+
+            # if we don't know the date we can't use the paper
+            if len(dparts) < 1:
+                continue
+
+
+            if len(dparts) < 3:
+                dparts.append(1)
+
+            try:
+                ent['D'] = "{0:04d}-{1:02d}-{2:02d}".format(*dparts)
+            except:
+                ent['D']="1970-01-01"
+
+            ent['E'] = {'DOI':item['DOI']}
+            ent['AA'] = []
+            for author in item['author']:
+                aa = {}
+                if 'given' in author and 'family' in author:
+                    aa['AuN'] = "{given} {family}".format(**author).lower()
+
+                    for affiliation in author['affiliation'][:1]:
+                        aa['AfN'] = affiliation['name'].lower()
+
+                    ent['AA'].append(aa)
+
+            results.append(ent)
+
+    return results
+
+
+def normalize_insts(insts):
+
+    normalized = {}
+
+    for inst, props in insts.items():
+
+        if inst.strip().lower().startswith("the"):
+            inst = inst[4:]
+
+        normalized[inst] = props
+
+    return normalized
 
 
 def find_candidate_papers(news_article, use_cache=True):
@@ -228,6 +309,9 @@ def find_candidate_papers(news_article, use_cache=True):
 
     for inst in news_article.institutions():
         insts[inst.text].append((inst.start, inst.end))
+
+
+    insts = normalize_insts(insts)
 
     inst_freq, people_freq = find_ent_frequencies(insts, people)
 

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import spacy
+import hashlib
 
 from flaskapp.model import Entity, NewsArticle, db, ScientificPaper, AcademicAuthor
 
@@ -25,6 +26,11 @@ def list_unpaired_news():
 
 def generate_paper_from_mskg(candidate, doi):
     """Given an MSKG json, create ScientificPaper record and Authors"""
+
+    if doi == candidate['Ti']:
+        hash = hashlib.new("sha256")
+        hash.update(candidate['Ti'].encode("utf8"))
+        doi = hash.hexdigest()
 
     paper = ScientificPaper(title=candidate['Ti'],
                             pubdate=datetime.strptime(candidate['D'],
