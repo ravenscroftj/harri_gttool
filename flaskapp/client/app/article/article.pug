@@ -5,7 +5,7 @@
     md-card#article-card
         md-toolbar
             .md-toolbar-tools
-                md-button.md-icon-button(aria-label="Back", ui-sref="news({reload:true})")
+                md-button.md-icon-button(aria-label="Back", ui-sref="news({reload:true})", ui-sref-opts="{reload: true, notify: true}")
                     md-icon(md-svg-icon="/media/images/icons/back.svg")
                 span.md-headline News Match
         md-card-content#articleContent
