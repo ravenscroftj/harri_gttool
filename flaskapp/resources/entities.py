@@ -25,7 +25,7 @@ class PersonListResource(Resource):
 
         people = article.people()
 
-        if type(people[0]) is Entity:
+        if len(people) > 0 and type(people[0]) is Entity:
             return marshal(people, entity_fields)
         else:
             return { ent:count for ent,count in people}

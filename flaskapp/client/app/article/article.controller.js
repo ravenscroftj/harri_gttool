@@ -120,6 +120,9 @@
                 $scope.candidates[i].linked=candidate.linked;
                 $scope.candidates[i].linked_id=candidate.linked_id;
               }
+
+              //set source to mskg if not known
+              $scope.candidates[i]['_source'] = "mskg";
             }
 
             //finished (un)linking process

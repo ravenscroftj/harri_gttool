@@ -29,7 +29,7 @@
               md-icon(md-svg-icon="/media/images/icons/link.svg" ng-show="candidate.linked")
               .md-list-item-text
                 h3 {{candidate.Ti|uppercase}}
-                h4 
+                h4 {{candidate['_source']}}
                 p Score {{candidate.score}}
                 
     // single candidate view

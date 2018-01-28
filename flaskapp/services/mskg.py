@@ -59,15 +59,21 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
         for author in ent['AA']:
 
             best_match_name = max([ (fuzz.ratio(author['AuN'],person.lower().strip()) ** 2 *count) for
-                             person,count in people_freq.items()])
+                             person,count in people_freq.items()] + [0])
 
             if 'AfN' in author:
                 best_match_inst = max([ (fuzz.ratio(author['AfN'],inst.lower().strip()) **2 * count) for
-                                 inst,count in inst_freq.items()])
+                                 inst,count in inst_freq.items()] + [0])
             else:
                 best_match_inst = 0
 
             #print(author['AuN'], best_match_name/people_count, best_match_inst/inst_count)
+
+            if(people_count) == 0:
+                people_count = 0.01
+
+            if(inst_count) == 0:
+                inst_count = 0.01
 
             score = (best_match_name/people_count)+(best_match_inst/inst_count) / td
 
@@ -88,11 +94,13 @@ def generate_date_constraint(date, days=60):
                                 upper.strftime(DATE_OUT_FMT))
 
 
-def generate_person_affil_constraint(person, inst=None):
+def generate_person_affil_constraint(person=None, inst=None):
     """Generate Microsoft knowledge graph person/affiliation constraint"""
 
     if inst is None:
         return "Composite(AA.AuN='{author}')".format(author=person.lower().strip())
+    elif person is None:
+        return "Composite(AA.AfN='{inst}')".format(inst=inst.lower().strip())
     else:
         return "Composite(AA.AuN='{author}'),Composite(AA.AfN='{inst}')".format(
             author=person.lower().strip(),
@@ -194,14 +202,57 @@ def results_for_person_inst_date(query):
 
     ents = res.json()['entities']
 
+    for ent in ents:
+        ent['_source'] = "mskg"
+        ent['_query_author'] = person
+        ent['_query_inst'] = inst
+
     if len(ents) > 0:
         results.extend(ents)
+
+    #get springer results too
+    ents = get_springer_results(person, date)
 
     # get crossref results too
     #ents = get_crossref_results(person, date)
 
-    #if len(ents) > 0:
-    #    results.extend(ents)
+    if len(ents) > 0:
+        results.extend(ents)
+
+    return results
+
+def get_springer_results(author, pubdate):
+
+
+    query = "year: {year} AND name:\"{name}\"".format(year=pubdate.strftime("%Y"),
+                                                  name=author)
+
+    params={
+            "api_key": current_app.config['SPRINGER_API_KEY'],
+            "q": query
+           }
+
+    r = requests.get("http://api.springer.com/metadata/json",params=params)
+
+    results = []
+    for item in r.json()['records']:
+
+        ent = {}
+
+        ent['Ti'] = item['title']
+        ent['D'] = item['publicationDate']
+        ent['E'] = {'DOI':item['doi']}
+
+        ent['AA'] = []
+        for author in item['creators']:
+            aa = {}
+            aa['AuN'] = author['creator'].lower()
+            ent['AA'].append(aa)
+
+        ent['_source'] = "springer"
+        ent['_query_author'] = author
+        results.append(ent)
+
 
     return results
 
@@ -320,6 +371,12 @@ def find_candidate_papers(news_article, use_cache=True):
 
     all_paper_results = []
     query_combos = []
+
+    if len(top_insts) < 1:
+        top_insts.append(None)
+
+    if len(top_people) < 1:
+        top_people.append(None)
 
     for inst in top_insts:
         for people in top_people:
