@@ -211,18 +211,76 @@ def results_for_person_inst_date(query):
         results.extend(ents)
 
     #get springer results too
-    ents = get_springer_results(person, date)
+    results.extend(get_springer_results(person, date))
+
+    #get scopus results too
+    results.extend(get_scopus_results(person, inst, date))
 
     # get crossref results too
     #ents = get_crossref_results(person, date)
 
-    if len(ents) > 0:
-        results.extend(ents)
 
     return results
 
-def get_springer_results(author, pubdate):
 
+def get_scopus_results(author, inst, pubdate):
+    """Query function for getting scopus api results"""
+
+    names = author.split(" ")
+
+    lastname = names[-1]
+    initial = names[0][0]
+
+
+
+    query = "AUTHOR-NAME({name}) YEAR({year}) AFFIL({affil})"\
+        .format(year=pubdate.strftime("%Y"),
+                name=lastname + "," + initial,
+                affil=inst)
+
+
+    params={
+            "apiKey": current_app.config['SCOPUS_API_KEY'],
+            "query": query
+           }
+
+    r = requests.get("https://api.elsevier.com/content/search/scopus",
+                     params=params)
+
+    results = []
+
+    if 'search-results' not in r.json():
+        return []
+
+
+    for item in r.json()['search-results']['entry']:
+
+        ent = {}
+        if 'error' in item and item['error'] == "Result set was empty":
+            continue
+        print(item)
+        ent['Ti'] = item['dc:title']
+        ent['D'] = item['prism:coverDate']
+        ent['E'] = {'DOI':item['prism:doi']}
+
+
+        ent['AA'] = [{"AuN":item['dc:creator'],
+                      "AfN": item['affiliation'][0]['affilname']
+                      }]
+
+
+        ent['_source'] = "scopus"
+        ent['_query_author'] = author
+        ent['_query_inst'] = inst
+        results.append(ent)
+
+
+    return results
+
+
+
+def get_springer_results(author, pubdate):
+    """Query function for getting springer api results"""
 
     query = "year: {year} AND name:\"{name}\"".format(year=pubdate.strftime("%Y"),
                                                   name=author)
