@@ -226,53 +226,60 @@ def results_for_person_inst_date(query):
 def get_scopus_results(author, inst, pubdate):
     """Query function for getting scopus api results"""
 
-    names = author.split(" ")
 
-    lastname = names[-1]
-    initial = names[0][0]
+    if author != None:
+        names = author.split(" ")
 
-
-
-    query = "AUTHOR-NAME({name}) YEAR({year}) AFFIL({affil})"\
-        .format(year=pubdate.strftime("%Y"),
-                name=lastname + "," + initial,
-                affil=inst)
+        lastname = names[-1]
+        initial = names[0][0]
 
 
-    params={
-            "apiKey": current_app.config['SCOPUS_API_KEY'],
-            "query": query
-           }
 
-    r = requests.get("https://api.elsevier.com/content/search/scopus",
-                     params=params)
-
-    results = []
-
-    if 'search-results' not in r.json():
-        return []
+        query = "AUTHOR-NAME({name}) YEAR({year}) AFFIL({affil})"\
+            .format(year=pubdate.strftime("%Y"),
+                    name=lastname + "," + initial,
+                    affil=inst)
 
 
-    for item in r.json()['search-results']['entry']:
 
-        ent = {}
-        if 'error' in item and item['error'] == "Result set was empty":
-            continue
-        print(item)
-        ent['Ti'] = item['dc:title']
-        ent['D'] = item['prism:coverDate']
-        ent['E'] = {'DOI':item['prism:doi']}
+        params={
+                "apiKey": current_app.config['SCOPUS_API_KEY'],
+                "query": query
+               }
+
+        r = requests.get("https://api.elsevier.com/content/search/scopus",
+                         params=params)
+
+        results = []
+
+        if 'search-results' not in r.json():
+            return []
 
 
-        ent['AA'] = [{"AuN":item['dc:creator'],
-                      "AfN": item['affiliation'][0]['affilname']
-                      }]
+        for item in r.json()['search-results']['entry']:
+
+            ent = {}
+            if 'error' in item and item['error'] == "Result set was empty":
+                continue
+            print(item)
+            ent['Ti'] = item['dc:title']
+            ent['D'] = item['prism:coverDate']
+
+            if 'prism:doi' in item:
+                ent['E'] = {'DOI':item['prism:doi']}
+            else:
+                ent['E'] = {}
 
 
-        ent['_source'] = "scopus"
-        ent['_query_author'] = author
-        ent['_query_inst'] = inst
-        results.append(ent)
+            ent['AA'] = [{"AuN":item['dc:creator'],
+                          "AfN": item['affiliation'][0]['affilname']
+                          }]
+
+
+            ent['_source'] = "scopus"
+            ent['_query_author'] = author
+            ent['_query_inst'] = inst
+            results.append(ent)
 
 
     return results
