@@ -8,7 +8,7 @@
                 span.md-headline {{ newsVm.title }}
         md-card-content(layout="column")
             section(flex, layout="row". layout-padding)
-              Showing {{offset}} to {{maxOffset}} of {{newsVm.total_count}} articles.
+              Showing {{offset+1}} to {{maxOffset}} of {{newsVm.total_count}} articles.
             md-list#newsList
               md-subheader.md-no-sticky News Articles
               

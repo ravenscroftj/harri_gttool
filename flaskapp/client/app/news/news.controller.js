@@ -41,6 +41,12 @@
       });
     };
 
+    $scope.previousPage = function(){
+      $state.go('.', {
+        page: parseInt($state.params.page)-1
+      });
+    };
+
     $scope.hideArticle = function(article) {
 
       if($scope.hidden){
@@ -60,11 +66,7 @@
     };
 
 
-    $scope.previousPage = function(){
-      $state.go('.', {
-        page: parseInt($state.params.page)-1
-      });
-    };
+
 
     $transitions.onEnter({}, function(transition, state){
       console.log(state);

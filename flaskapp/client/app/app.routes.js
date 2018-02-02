@@ -15,8 +15,8 @@
     return {
       page: {
         value: '1',
-        squash:true,
-        //dynamic: true
+        squash:true
+      //  dynamic: true
       },
       filter: {
         value: '',
@@ -49,7 +49,7 @@
       {
         state: 'news.hidden',
         config: {
-          url:'/hidden?page&filter',
+          url:'/hidden',
           templateUrl: '/media/build/news/news.html',
           controller: 'NewsController as newsVm',
           params: defineParams()
@@ -58,7 +58,7 @@
       {
         state: 'news.linked',
         config: {
-          url:'/linked?page&filter',
+          url:'/linked',
           templateUrl: '/media/build/news/news.html',
           controller: 'NewsController as newsVm',
           params: defineParams()
