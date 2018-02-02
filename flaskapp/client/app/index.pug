@@ -44,5 +44,6 @@ html(lang="en", ng-app="app")
                 a(ui-sref="news({page:1, reload:true})", ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") News
                 a(ui-sref="news.linked({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Linked News
                 a(ui-sref="news.hidden({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Hidden News
+                a(ui-sref="news.spam({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Spam News
           md-content(flex layout-padding)
             #wrapper(ui-view, flex, layout="column")

@@ -18,7 +18,8 @@ article_fields = {
     "hostname": fields.String(),
     "content": fields.String(attribute='text'),
     "publish_date": fields.DateTime(),
-    "hidden": fields.Boolean()
+    "hidden": fields.Boolean(),
+    "spam": fields.Boolean()
 }
 
 news_envelope = {
@@ -40,6 +41,10 @@ class NewsArticleListResource(Resource):
                             choices=['true', 'false'],
                             location='args')
 
+        parser.add_argument('spam', default="false",
+                            choices=['true', 'false'],
+                            location='args')
+
         parser.add_argument('linked', default="false",
                             choices=['true', 'false'],
                             location='args')
@@ -48,11 +53,16 @@ class NewsArticleListResource(Resource):
 
         args.hidden = args.hidden == "true"
 
+        args.spam = args.spam == "true"
+
         r = NewsArticle.query\
             .filter(NewsArticle.hidden==args.hidden)\
+            .filter(NewsArticle.spam==args.spam)
 
         if args.urlfilter != "":
             r = r.filter(NewsArticle.url.like("%{}%".format(args.urlfilter)))
+
+
 
         if args.linked == "true":
             r = r.filter(NewsArticle.id.in_(select([news_paper_links.c.article_id])))
@@ -80,6 +90,7 @@ class NewsArticleResource(Resource):
 
         parser = reqparse.RequestParser()
         parser.add_argument('hidden', default="false", choices=['true','false'])
+        parser.add_argument('spam', default="false", choices=['true','false'])
         parser.add_argument('publish_date', default=None)
 
         args = parser.parse_args()
@@ -93,6 +104,7 @@ class NewsArticleResource(Resource):
             newdate = dateutil.parser.parse(args.publish_date)
             article.publish_date = newdate
 
+        article.spam = args.spam == "true"
         article.hidden = args.hidden == "true"
 
         db.session.commit()

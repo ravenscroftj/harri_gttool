@@ -50,6 +50,28 @@
 
     };
 
+
+    $scope.articleToggleSpam = function(article){
+
+      var promise = Promise.resolve();
+      $scope.hiding = true;
+
+      if(article.spam) {
+        //unhide article
+        promise = newsService.unspamArticle(article);
+      }else{
+        //hide article
+        promise = newsService.spamArticle(article);
+      }
+
+      //resolve request then do next thing
+      promise.then(function(response){
+        $scope.article.spam = response.data.spam;
+        $scope.hiding = false;
+      });
+
+    };
+
     $scope.getInstitutions = function(){
       newsService.getInstitutions(articleVm.articleID)
         .then(function(data){

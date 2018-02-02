@@ -109,6 +109,7 @@
       md-card-content(layout="column")
         section(layout="row", layout-wrap, layout-align="center center")
           md-button.md-raised(ng-click="articleToggleHidden(article)", ng-disabled="hiding")  {{article.hidden ? "Unhide Article" : "Hide Article"}}
+          md-button.md-raised(ng-click="articleToggleSpam(article)", ng-disabled="hiding")  {{article.spam ? "Unspam Article" : "Spam Article"}}
           md-progress-circular(md-mode="indeterminate" ng-show="hiding")
             
         div(layout="column", flex)

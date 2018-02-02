@@ -48,6 +48,8 @@ class NewsArticle(db.Model):
 
     hidden = db.Column("hidden", db.Boolean, server_default='0')
 
+    spam = db.Column("spam", db.Boolean, server_default='0')
+
     @property
     def hostname(self):
         return urlparse(self.url).hostname

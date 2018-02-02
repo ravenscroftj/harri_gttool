@@ -24,6 +24,8 @@
                   .md-secondary
                     md-button.md-secondary.md-icon-button(ng-show="hovering && !isHiding[result.id]" ng-click="hideArticle(result)")
                       md-icon(md-svg-icon="/media/images/icons/{{$state.current.name == 'news.hidden' ? 'visibility.svg' : 'visibility_off.svg' }}")
+                    md-button.md-secondary.md-icon-button(ng-show="hovering && !isHiding[result.id]" ng-click="spamArticle(result)")
+                      md-icon(md-svg-icon="/media/images/icons/{{$state.current.name == 'news.spam' ? 'unspam.svg' : 'spam.svg' }}")
                     md-progress-circular(ng-show="isHiding[result.id]")                      
             section(flex, layout="row" layout-padding, layout-align="center center")
                 md-button.md-raised(ng-click="previousPage()" ng-disabled="$state.params.page<2") Previous Page

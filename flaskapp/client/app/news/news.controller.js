@@ -65,6 +65,23 @@
 
     };
 
+    $scope.spamArticle = function(article) {
+
+      if($scope.spam){
+        console.log('UnSpam article ' + article.id);
+          $scope.isHiding[article.id] = true;
+          newsService.unspamArticle(article).then(function(response){
+            loadFromState();
+          });
+      }else{
+        console.log('Spam article ' + article.id);
+          $scope.isHiding[article.id] = true;
+          newsService.spamArticle(article).then(function(response){
+            loadFromState();
+          });
+      }
+
+    };
 
 
 
@@ -79,12 +96,15 @@
       $scope.isHiding = {};
       $scope.hidden = $state.current.name == "news.hidden";
       $scope.linked = $state.current.name == "news.linked";
+      $scope.spam =  $state.current.name == "news.spam";
       $scope.newsFilter = $state.params.filter;
 
       if($scope.hidden){
         newsVm.title = "Hidden Articles";
       }else if($scope.linked){
         newsVm.title = "Linked Articles";
+      }else if ($scope.spam) {
+        newsVm.title = "Spam Articles";
       }
 
       console.log("Load news state", $state.current.name)
@@ -96,10 +116,10 @@
       var offset = ($state.params.page-1) * 10;
       $scope.offset = offset;
 
-      console.log($scope.hidden, $scope.linked);
+      console.log($scope.hidden, $scope.linked, $scope.spam);
 
       $scope.isLoading = true;
-      newsService.getNews($scope.hidden, $scope.linked, offset, $scope.newsFilter).then(function(data){
+      newsService.getNews($scope.hidden, $scope.linked, $scope.spam, offset, $scope.newsFilter).then(function(data){
         console.log("Got some news");
         $scope.isLoading = false;
         $scope.newsArticles = data.articles;

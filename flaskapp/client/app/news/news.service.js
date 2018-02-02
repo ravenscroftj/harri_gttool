@@ -26,6 +26,10 @@
 
       hideArticle: hideArticle,
 
+      spamArticle: spamArticle,
+
+      unspamArticle: unspamArticle,
+
       getArticle: function(articleID){
         return getData('/api/news/' + articleID);
       },
@@ -71,6 +75,25 @@
     function hideArticle(article) {
         return $http.put('/api/news/' + article.id, {
           "hidden": "true"
+        })
+    }
+
+    /**
+    * Remove spam flag from given article
+    *
+    */
+    function unspamArticle(article) {
+        return $http.put('/api/news/' + article.id, {
+          "spam": "false"
+        })
+    }
+
+    /**
+    * Add spam flag to article
+    */
+    function spamArticle(article) {
+        return $http.put('/api/news/' + article.id, {
+          "spam": "true"
         })
     }
 
@@ -122,11 +145,12 @@
     }
 
 
-    function getNews(hidden,linked, offset, filter) {
+    function getNews(hidden,linked, spam, offset, filter) {
 
       return $http.get('/api/news', {"params":{
         "hidden": hidden,
         "linked": linked,
+        "spam":spam,
         "offset":  offset,
         "urlfilter": filter
       }}).then(function (response) {

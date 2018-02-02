@@ -65,6 +65,15 @@
         }
       },
       {
+        state: 'news.spam',
+        config: {
+          url:'/spam',
+          templateUrl: '/media/build/news/news.html',
+          controller: 'NewsController as newsVm',
+          params: defineParams()
+        }
+      },
+      {
         state: 'news.article',
         config: {
           url:'/{articleID:[0-9]+}',
