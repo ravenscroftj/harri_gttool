@@ -200,15 +200,16 @@ def results_for_person_inst_date(query):
                daterange=generate_date_constraint(date)))
 
 
-    ents = res.json()['entities']
+    if 'entities' in res.json():
+        ents = res.json()['entities']
 
-    for ent in ents:
-        ent['_source'] = "mskg"
-        ent['_query_author'] = person
-        ent['_query_inst'] = inst
+        for ent in ents:
+            ent['_source'] = "mskg"
+            ent['_query_author'] = person
+            ent['_query_inst'] = inst
 
-    if len(ents) > 0:
-        results.extend(ents)
+        if len(ents) > 0:
+            results.extend(ents)
 
     #get springer results too
     results.extend(get_springer_results(person, date))
