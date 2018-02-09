@@ -1,9 +1,6 @@
 .no-errors .md-errors-spacer {
   min-height: 0;
 }
-#nav {
-  height: 100%;
-}
 md-input-container .hint {
   position: absolute;
   left: 2px;
