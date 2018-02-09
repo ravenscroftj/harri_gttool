@@ -13,6 +13,8 @@ from .news import NewsArticleListResource,\
  NewsArticleLinksResource,\
  NewsArticleLinkResource
 
+from .spam import SpamFilterResource
+
 from .entities import PersonListResource, InstitutionListResource
 
 api.add_resource(NewsArticleListResource, "/news", "/news/")
@@ -22,3 +24,4 @@ api.add_resource(InstitutionListResource, "/news/<string:article_id>/institution
 api.add_resource(NewsArticleCandidatePapers, "/news/<string:article_id>/candidates")
 api.add_resource(NewsArticleLinksResource, "/news/<string:article_id>/links")
 api.add_resource(NewsArticleLinkResource, "/news/<int:article_id>/links/<int:paper_id>")
+api.add_resource(SpamFilterResource, "/spamfilter")

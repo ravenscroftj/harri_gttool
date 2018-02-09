@@ -36,6 +36,8 @@ class NewsArticle(db.Model):
 
     url = db.Column(db.String(255))
 
+    hostname = db.Column(db.String(255))
+
     title = db.Column(db.String(255))
 
     text = db.Column("content", db.Text(collation="utf8_general_ci"))
