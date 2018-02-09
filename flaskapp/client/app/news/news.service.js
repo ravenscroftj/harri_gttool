@@ -30,6 +30,10 @@
 
       unspamArticle: unspamArticle,
 
+      checkSpam: checkSpam,
+
+      filterSpam: filterSpam,
+
       getArticle: function(articleID){
         return getData('/api/news/' + articleID);
       },
@@ -67,6 +71,20 @@
         return $http.put('/api/news/' + article.id, {
           "hidden": "false"
         })
+    }
+
+    function checkSpam(articles) {
+      var ids = articles.map( x => x.id );
+
+      return $http.get('/api/spamfilter', {"params":{
+        "articles": ids.join()
+      }});
+    }
+
+    function filterSpam(articles) {
+      var ids = articles.map( x => x.id );
+
+      return $http.post('/api/spamfilter', {"articles": ids.join()});
     }
 
     /**

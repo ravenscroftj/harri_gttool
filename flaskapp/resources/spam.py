@@ -38,7 +38,7 @@ class SpamFilterResource(Resource):
         parser = reqparse.RequestParser()
 
         parser.add_argument('articles', action='store', required=True,
-                            location='args')
+                            location=['args', 'values', 'json'])
 
         args = parser.parse_args()
 
@@ -86,7 +86,7 @@ class SpamFilterResource(Resource):
 
 
         spamlist = [article['id'] for article in results
-                    if article['scores']['spam'] > 0.6]
+                    if article['scores']['spam'] > 0.5]
 
         NewsArticle.query.filter(NewsArticle.id.in_(spamlist))\
                 .update({NewsArticle.spam: True},

@@ -11,22 +11,29 @@
               Showing {{offset+1}} to {{maxOffset}} of {{newsVm.total_count}} articles.
             md-list#newsList
               md-subheader.md-no-sticky News Articles
-              
+
                 .md-input-container
                   label Filter
                   input(ng-model="newsFilter")
+                  md-button.md-secondary.md-icon-button(ng-click="checkSpam()")
+                    md-icon(md-svg-icon="/media/images/icons/spampreview.svg")
+                  md-button.md-secondary.md-icon-button(ng-click="filterSpam()")
+                    md-icon(md-svg-icon="/media/images/icons/spamfilter.svg")
               md-progress-circular(md-mode="indeterminate" ng-show="isLoading")
-              md-list-item.md-3-line(ng-repeat="result in newsArticles" ng-click="newsClick(result.id)" ng-mouseover="hovering=true", ng-mouseleave="hovering=false")
+              md-list-item.md-3-line(ng-repeat="result in newsArticles", ng-click="newsClick(result.id)", ng-mouseover="hovering=true", ng-mouseleave="hovering=false")
+                  img(ng-src="/media/images/icons/spam.svg", ng-show="result.spamScore > 0.5")
                   .md-list-item-text
                       h3 {{ result.title }}
                       h4 {{result.hostname}}
-                      p {{result.publish_date}}
+                      p
+                        p {{result.publish_date}}
+                        p(ng-show="result.spamScore") Spam Score: {{result.spamScore}}
                   .md-secondary
                     md-button.md-secondary.md-icon-button(ng-show="hovering && !isHiding[result.id]" ng-click="hideArticle(result)")
                       md-icon(md-svg-icon="/media/images/icons/{{$state.current.name == 'news.hidden' ? 'visibility.svg' : 'visibility_off.svg' }}")
                     md-button.md-secondary.md-icon-button(ng-show="hovering && !isHiding[result.id]" ng-click="spamArticle(result)")
                       md-icon(md-svg-icon="/media/images/icons/{{$state.current.name == 'news.spam' ? 'unspam.svg' : 'spam.svg' }}")
-                    md-progress-circular(ng-show="isHiding[result.id]")                      
+                    md-progress-circular(ng-show="isHiding[result.id]")
             section(flex, layout="row" layout-padding, layout-align="center center")
                 md-button.md-raised(ng-click="previousPage()" ng-disabled="$state.params.page<2") Previous Page
 

@@ -19,6 +19,30 @@
       loadFromState();
     }
 
+    $scope.checkSpam = function(){
+      newsService.checkSpam($scope.newsArticles)
+      .then(function(results){
+        var spamidx = {};
+        console.log(results);
+        for (var i=0; i<results.data.length; i++){
+          spamidx[results.data[i].id] = results.data[i].scores;
+        }
+
+        console.log($scope.newsArticles);
+
+        for(var i=0; i < $scope.newsArticles.length; i++) {
+          $scope.newsArticles[i].spamScore = spamidx[$scope.newsArticles[i].id].spam;
+        }
+      });
+    };
+
+    $scope.filterSpam = function(){
+      newsService.filterSpam($scope.newsArticles)
+      .then(function(results){
+        loadFromState();
+      });
+    };
+
 
     $scope.newsClick = function(articleID){
       $state.go('news.article', {

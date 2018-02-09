@@ -11,6 +11,9 @@
 
     $mdThemingProvider.theme('successTheme')
     .primaryPalette('green');
+
+    $mdThemingProvider.theme('errorTheme')
+    .primaryPalette('red');
   }
 
 })();
