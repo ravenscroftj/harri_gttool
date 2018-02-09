@@ -227,6 +227,7 @@ def results_for_person_inst_date(query):
 def get_scopus_results(author, inst, pubdate):
     """Query function for getting scopus api results"""
 
+    results = []
 
     if author != None:
         names = author.split(" ")
@@ -251,7 +252,6 @@ def get_scopus_results(author, inst, pubdate):
         r = requests.get("https://api.elsevier.com/content/search/scopus",
                          params=params)
 
-        results = []
 
         if 'search-results' not in r.json():
             return []
