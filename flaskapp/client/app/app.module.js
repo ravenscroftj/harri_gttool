@@ -24,7 +24,7 @@
     // to active whenever 'contacts.list' or one of its descendants is active.
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams;
-    $rootScope.isNavOpen = true; //$mdMedia('gt-sm');
+    $rootScope.isNavOpen = $mdMedia('gt-sm');
 
     $rootScope.toggleMenu = function(){
       $rootScope.isNavOpen = !$rootScope.isNavOpen;

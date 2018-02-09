@@ -47,7 +47,7 @@ html(lang="en", ng-app="app")
                 a(ui-sref="news.hidden({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Hidden News
                 a(ui-sref="news.spam({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Spam News
             
-            section(layout="column" layout-fill)
+            section(layout="column" flex)
               md-toolbar(hide-gt-sm, ng-show="!isNavOpen", md-scroll-shrink)
                 md-button.md-icon-button(aria-label="Menu" ng-click="toggleMenu()")
                   md-icon(md-svg-icon="/media/images/icons/menu.svg")
