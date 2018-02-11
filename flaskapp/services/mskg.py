@@ -262,6 +262,8 @@ def get_scopus_results(author, inst, pubdate):
             return []
 
 
+
+
         for item in r.json()['search-results']['entry']:
 
             ent = {}
@@ -280,9 +282,48 @@ def get_scopus_results(author, inst, pubdate):
                 ent['E'] = {}
 
 
-            ent['AA'] = [{"AuN":item['dc:creator'],
-                          "AfN": item['affiliation'][0]['affilname'] if 'affiliation' in item else ""
-                          }]
+            #ent['AA'] = [{"AuN":item['dc:creator'],
+            #              "AfN": item['affiliation'][0]['affilname'] if 'affiliation' in item else ""
+            #              }]
+
+
+            # author information must be extracted with a new API call
+
+            for link in  item['link']:
+                if link['@ref'] == "author-affiliation":
+                    authorlink = link['@href']
+                    break
+
+            author_affil_url = "{}&apiKey={}".format( authorlink,
+                current_app.config['SCOPUS_API_KEY']
+                )
+
+            adata = requests.get(author_affil_url,
+                             headers={"Accept":"application/json"}).json()
+
+            authors = adata['abstracts-retrieval-response']['authors']['author']
+
+            amap = {a['@id']: a for a in
+                    adata['abstracts-retrieval-response']['affiliation']}
+
+            ent['AA'] = []
+            for author in authors:
+
+                # affiliation of author may not be defined
+                if 'affiliation' in author:
+                    # if affilaition is defined it could be a list (many affil)
+                    if type(author['affiliation']) is list:
+                        aid = author['affiliation'][0]['@id']
+                    else:
+                        aid = author['affiliation']['@id']
+
+                    affilname = amap[aid]['affilname']
+                else:
+                    #if affiliation not defined, leave blank
+                    affilname = ""
+
+                ent['AA'].append({"AuN": author['ce:indexed-name'],
+                                  "AfN": affilname})
 
 
             ent['_source'] = "scopus"
@@ -292,6 +333,7 @@ def get_scopus_results(author, inst, pubdate):
 
 
     return results
+
 
 
 
