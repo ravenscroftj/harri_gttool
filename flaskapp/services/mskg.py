@@ -273,7 +273,7 @@ def get_scopus_results(author, inst, pubdate):
 
 
             ent['AA'] = [{"AuN":item['dc:creator'],
-                          "AfN": item['affiliation'][0]['affilname']
+                          "AfN": item['affiliation'][0]['affilname'] if 'affiliation' in item else ""
                           }]
 
 
