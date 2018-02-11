@@ -316,6 +316,9 @@ def get_scopus_results(author, inst, pubdate):
             ent['AA'] = []
             for author in authors:
 
+                #if affiliation not defined, leave blank
+                affilname = ""
+
                 # affiliation of author may not be defined
                 if 'affiliation' in author:
                     # if affilaition is defined it could be a list (many affil)
@@ -324,10 +327,9 @@ def get_scopus_results(author, inst, pubdate):
                     else:
                         aid = author['affiliation']['@id']
 
-                    affilname = amap[aid]['affilname']
-                else:
-                    #if affiliation not defined, leave blank
-                    affilname = ""
+                    if aid in amap:
+                        affilname = amap[aid]['affilname']
+
 
                 ent['AA'].append({"AuN": author['ce:indexed-name'],
                                   "AfN": affilname})
