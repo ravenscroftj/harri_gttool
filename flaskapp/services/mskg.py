@@ -264,7 +264,8 @@ def get_scopus_results(author, inst, pubdate):
 
 
 
-        for item in r.json()['search-results']['entry']:
+        #lets inspect the first 3 results - more than that probably isn't useful
+        for item in r.json()['search-results']['entry'][:3]:
 
             ent = {}
             if 'error' in item and item['error'] == "Result set was empty":
@@ -298,13 +299,19 @@ def get_scopus_results(author, inst, pubdate):
                 current_app.config['SCOPUS_API_KEY']
                 )
 
+            print("Loading author data for paper {}".format(author_affil_url))
             adata = requests.get(author_affil_url,
                              headers={"Accept":"application/json"}).json()
 
             authors = adata['abstracts-retrieval-response']['authors']['author']
 
-            amap = {a['@id']: a for a in
-                    adata['abstracts-retrieval-response']['affiliation']}
+            affils = adata['abstracts-retrieval-response']['affiliation']
+
+            if type(affils) is list:
+                amap = {a['@id']: a for a in
+                        adata['abstracts-retrieval-response']['affiliation']}
+            else:
+                amap = {affils['@id']: affils}
 
             ent['AA'] = []
             for author in authors:
