@@ -54,7 +54,10 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
         else:
             print(E)
 
-        doi2paper[doi] = ent
+        if doi in doi2paper:
+            doi2paper[doi]['_source'] += "," + ent['_source']
+        else:
+            doi2paper[doi] = ent
 
         for author in ent['AA']:
 
@@ -180,7 +183,7 @@ def get_papers_for_query(q):
 
     result = requests.post(endpoint, headers=headers, data=params)
 
-    print(result.text)
+    print(result.json())
 
     return result
 
@@ -252,6 +255,8 @@ def get_scopus_results(author, inst, pubdate):
         r = requests.get("https://api.elsevier.com/content/search/scopus",
                          params=params)
 
+        print(r.json())
+
 
         if 'search-results' not in r.json():
             return []
@@ -262,9 +267,12 @@ def get_scopus_results(author, inst, pubdate):
             ent = {}
             if 'error' in item and item['error'] == "Result set was empty":
                 continue
-            print(item)
+
             ent['Ti'] = item['dc:title']
             ent['D'] = item['prism:coverDate']
+
+            if 'prism:publicationName' in item:
+                ent['J'] = {"JN": item['prism:publicationName']}
 
             if 'prism:doi' in item:
                 ent['E'] = {'DOI':item['prism:doi']}
@@ -339,8 +347,6 @@ def get_crossref_results(author, pubdate):
            }
 
     r = requests.get("https://api.crossref.org/works", params=params)
-
-    print(params)
 
     results = []
     for item in r.json()['message']['items']:
