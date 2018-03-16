@@ -35,15 +35,21 @@ html(lang="en", ng-app="app")
         +script("/media/build/app.js")
 
     body(ng-cloak, ng-app="app", ng-strict-di, layout="column")
-        #page(layout="row" ng-cloak flex)
-          md-sidenav#nav.md-sidenav-left(md-component-id="left", md-whiteframe="4",md-is-locked-open="true")
-            header.nav-header
-              md-content(flex, layout-padding, layout="column")
-                h1 Harri GT Tool
-              md-content(flex, layout-padding, layout="column")
+        #page(layout="row" ng-cloak)
+            md-sidenav#nav.md-sidenav-left.md-whiteframe-z1(md-component-id="left", md-whiteframe="4",md-is-locked-open="isNavOpen")
+              md-toolbar.md-toolbar-tools
+                h3 Harri GT Tool
+                md-button.md-icon-button(ng-click="toggleMenu()", aria-label="Close" hide-gt-sm) X
+
+              md-content(role="navigation", flex, layout-padding, layout="column")
                 a(ui-sref="news({page:1, reload:true})", ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") News
                 a(ui-sref="news.linked({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Linked News
                 a(ui-sref="news.hidden({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Hidden News
                 a(ui-sref="news.spam({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Spam News
-          md-content(flex layout-padding)
-            #wrapper(ui-view, flex, layout="column")
+            
+            section(layout="column" flex)
+              md-toolbar(hide-gt-sm, ng-show="!isNavOpen", md-scroll-shrink)
+                md-button.md-icon-button(aria-label="Menu" ng-click="toggleMenu()")
+                  md-icon(md-svg-icon="/media/images/icons/menu.svg")
+              md-content(flex layout-padding)
+                #wrapper(ui-view, flex, layout="column")

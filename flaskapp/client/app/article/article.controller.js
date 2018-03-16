@@ -175,6 +175,14 @@
       return newsService.getCandidates(articleVm.articleID, cached)
         .then(function(data){
 
+          if(!data){
+
+            $scope.candidateCount = 0;
+            $scope.loadingCandidates = false;
+            $scope.candidateSearchMessage = "Something went wrong loading candidates for this article";
+            return Promise.resolve();
+          }
+
           var candidates = [];
 
           if(data.candidate){
@@ -201,6 +209,12 @@
 
           // return promise to caller
           return Promise.resolve();
+        }, function(fail){
+
+          $scope.loadingCandidates = false;
+          $scope.candidateSearchMessage = "Something went wrong loading candidates for this article";
+
+
         });
     }
 

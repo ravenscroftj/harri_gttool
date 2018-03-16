@@ -1,7 +1,7 @@
-#article(layout="row", layout-padding)
+#article(layout="row", layout-padding, layout-sm="column", layout-xs="column")
   
   
-  #card-holder(layout="column", flex=70)
+  #card-holder(layout="column", flex, flex-sm)
     md-card#article-card
         md-toolbar
             .md-toolbar-tools
@@ -102,7 +102,7 @@
   //side panel for article view
   md-content.md-padding(layout="column")  
   
-    md-card#information(layout="column", flex="40", height="400px")
+    md-card#information(layout="column", height="400px")
       md-card-title(flex="none")
         md-card-title-text
           span.md-headline Article Information

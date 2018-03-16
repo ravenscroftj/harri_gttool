@@ -54,7 +54,10 @@ def score_results(all_paper_results, date, people_freq, inst_freq):
         else:
             print(E)
 
-        doi2paper[doi] = ent
+        if doi in doi2paper:
+            doi2paper[doi]['_source'] += "," + ent['_source']
+        else:
+            doi2paper[doi] = ent
 
         for author in ent['AA']:
 
@@ -180,7 +183,7 @@ def get_papers_for_query(q):
 
     result = requests.post(endpoint, headers=headers, data=params)
 
-    print(result.text)
+    print(result.json())
 
     return result
 
@@ -200,15 +203,16 @@ def results_for_person_inst_date(query):
                daterange=generate_date_constraint(date)))
 
 
-    ents = res.json()['entities']
+    if 'entities' in res.json():
+        ents = res.json()['entities']
 
-    for ent in ents:
-        ent['_source'] = "mskg"
-        ent['_query_author'] = person
-        ent['_query_inst'] = inst
+        for ent in ents:
+            ent['_source'] = "mskg"
+            ent['_query_author'] = person
+            ent['_query_inst'] = inst
 
-    if len(ents) > 0:
-        results.extend(ents)
+        if len(ents) > 0:
+            results.extend(ents)
 
     #get springer results too
     results.extend(get_springer_results(person, date))
@@ -226,6 +230,7 @@ def results_for_person_inst_date(query):
 def get_scopus_results(author, inst, pubdate):
     """Query function for getting scopus api results"""
 
+    results = []
 
     if author != None:
         names = author.split(" ")
@@ -250,20 +255,27 @@ def get_scopus_results(author, inst, pubdate):
         r = requests.get("https://api.elsevier.com/content/search/scopus",
                          params=params)
 
-        results = []
+        print(r.json())
+
 
         if 'search-results' not in r.json():
             return []
 
 
-        for item in r.json()['search-results']['entry']:
+
+
+        #lets inspect the first 3 results - more than that probably isn't useful
+        for item in r.json()['search-results']['entry'][:3]:
 
             ent = {}
             if 'error' in item and item['error'] == "Result set was empty":
                 continue
-            print(item)
+
             ent['Ti'] = item['dc:title']
             ent['D'] = item['prism:coverDate']
+
+            if 'prism:publicationName' in item:
+                ent['J'] = {"JN": item['prism:publicationName']}
 
             if 'prism:doi' in item:
                 ent['E'] = {'DOI':item['prism:doi']}
@@ -271,9 +283,56 @@ def get_scopus_results(author, inst, pubdate):
                 ent['E'] = {}
 
 
-            ent['AA'] = [{"AuN":item['dc:creator'],
-                          "AfN": item['affiliation'][0]['affilname']
-                          }]
+            #ent['AA'] = [{"AuN":item['dc:creator'],
+            #              "AfN": item['affiliation'][0]['affilname'] if 'affiliation' in item else ""
+            #              }]
+
+
+            # author information must be extracted with a new API call
+
+            for link in  item['link']:
+                if link['@ref'] == "author-affiliation":
+                    authorlink = link['@href']
+                    break
+
+            author_affil_url = "{}&apiKey={}".format( authorlink,
+                current_app.config['SCOPUS_API_KEY']
+                )
+
+            print("Loading author data for paper {}".format(author_affil_url))
+            adata = requests.get(author_affil_url,
+                             headers={"Accept":"application/json"}).json()
+
+            authors = adata['abstracts-retrieval-response']['authors']['author']
+
+            affils = adata['abstracts-retrieval-response']['affiliation']
+
+            if type(affils) is list:
+                amap = {a['@id']: a for a in
+                        adata['abstracts-retrieval-response']['affiliation']}
+            else:
+                amap = {affils['@id']: affils}
+
+            ent['AA'] = []
+            for author in authors:
+
+                #if affiliation not defined, leave blank
+                affilname = ""
+
+                # affiliation of author may not be defined
+                if 'affiliation' in author:
+                    # if affilaition is defined it could be a list (many affil)
+                    if type(author['affiliation']) is list:
+                        aid = author['affiliation'][0]['@id']
+                    else:
+                        aid = author['affiliation']['@id']
+
+                    if aid in amap:
+                        affilname = amap[aid]['affilname']
+
+
+                ent['AA'].append({"AuN": author['ce:indexed-name'],
+                                  "AfN": affilname})
 
 
             ent['_source'] = "scopus"
@@ -283,6 +342,7 @@ def get_scopus_results(author, inst, pubdate):
 
 
     return results
+
 
 
 
@@ -338,8 +398,6 @@ def get_crossref_results(author, pubdate):
            }
 
     r = requests.get("https://api.crossref.org/works", params=params)
-
-    print(params)
 
     results = []
     for item in r.json()['message']['items']:
