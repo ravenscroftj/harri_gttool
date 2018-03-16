@@ -17,6 +17,7 @@
     newsVm.$onInit = function(){
       console.log("init");
       loadFromState();
+      console.log("loggedin:",$scope.loggedIn);
     }
 
     $scope.checkSpam = function(){

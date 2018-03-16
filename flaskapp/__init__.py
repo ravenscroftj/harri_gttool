@@ -1,5 +1,12 @@
 from flask import Flask, send_from_directory
-from .model import db
+from .model import db, User, Role
+
+from flask_security import Security, SQLAlchemyUserDatastore
+
+# Setup Flask-Security
+security = Security()
+
+
 def create_app():
     """Create app """
     app = Flask(__name__)
@@ -24,6 +31,10 @@ def create_app():
 
     # register database
     db.init_app(app)
+
+    #register security
+    datastore =  SQLAlchemyUserDatastore(db, User, Role)
+    security.init_app(app, datastore)
 
     return app
 

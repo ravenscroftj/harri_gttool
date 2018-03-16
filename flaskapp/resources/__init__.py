@@ -25,3 +25,8 @@ api.add_resource(NewsArticleCandidatePapers, "/news/<string:article_id>/candidat
 api.add_resource(NewsArticleLinksResource, "/news/<string:article_id>/links")
 api.add_resource(NewsArticleLinkResource, "/news/<int:article_id>/links/<int:paper_id>")
 api.add_resource(SpamFilterResource, "/spamfilter")
+
+
+from .auth import SecureResource
+
+api.add_resource(SecureResource, "/securetest")

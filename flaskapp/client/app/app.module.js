@@ -26,7 +26,9 @@
     $rootScope.$stateParams = $stateParams;
     $trace.enable('TRANSITION')
 
+    $rootScope.loggedIn = "hello";
 
   }
+
 
 })();
