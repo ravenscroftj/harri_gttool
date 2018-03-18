@@ -11,14 +11,18 @@
     /* @ngInject */
     function authService($http, $log, $localStorage, $rootScope){
 
+        var authVm = this;
+
+        this.isAuthenticated = function(){
+            return $localStorage.isAuthenticated || false;  
+        }
+
         return {
 
-            isAuthenticated: function(){
-              return $localStorage.isAuthenticated || false;  
-            },
+            isAuthenticated: authVm.isAuthenticated,
 
             getUsername: function(){
-                if (this.isAuthenticated()) {
+                if (authVm.isAuthenticated()) {
                     return $localStorage.userProfile.username;
                 }else{
                     return null;
@@ -26,8 +30,8 @@
             },
 
             getAuthToken: function(){
-                if (this.isAuthenticated()) {
-                    return $localStorage.userProfile.token;
+                if (authVm.isAuthenticated()) {
+                    return $localStorage.userProfile.authentication_token;
                 }else{
                     return null;
                 }

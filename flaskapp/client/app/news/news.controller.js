@@ -10,14 +10,13 @@
   function NewsController($scope, $state, $transitions, defaultTitle, newsService) {
     var newsVm = this;
     $scope.$state = $state;
+    $scope.errorMessage = null;
     newsVm.title = defaultTitle;
     newsVm.selected = {};
     newsVm.total_count = 0;
 
     newsVm.$onInit = function(){
-      console.log("init");
       loadFromState();
-      console.log("loggedin:",$scope.loggedIn);
     }
 
     $scope.checkSpam = function(){
@@ -38,8 +37,17 @@
     };
 
     $scope.filterSpam = function(){
-      newsService.filterSpam($scope.newsArticles)
+      return newsService.filterSpam($scope.newsArticles)
+      .catch(function(result){
+        if(result.status == 401){
+          $scope.errorMessage = "Guests are not authorized to perform this action.";
+        }else if(result.status >= 500){
+          $scope.errorMessage="There was a server error.";
+        }
+
+      })
       .then(function(results){
+        console.log(results);
         loadFromState();
       });
     };

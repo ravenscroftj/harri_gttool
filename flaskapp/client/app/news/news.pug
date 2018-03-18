@@ -6,7 +6,14 @@
                 //md-button.md-icon-button(aria-label="Back", ui-sref="main")
                 //    md-icon(md-svg-icon="/media/images/icons/back.svg")
                 span.md-headline {{ newsVm.title }}
+
+        // warn the user if something went wrong
+        md-toolbar.md-warn(ng-show="errorMessage", layout="row", layout-align="center center")
+          p {{errorMessage}}
+
         md-card-content(layout="column")
+
+
             section(flex, layout="row". layout-padding)
               Showing {{offset+1}} to {{maxOffset}} of {{newsVm.total_count}} articles.
             md-list#newsList
@@ -20,6 +27,7 @@
                   md-button.md-secondary.md-icon-button(ng-click="filterSpam()")
                     md-icon(md-svg-icon="/media/images/icons/spamfilter.svg")
               md-progress-circular(md-mode="indeterminate" ng-show="isLoading")
+
               md-list-item.md-3-line(ng-repeat="result in newsArticles", ng-click="newsClick(result.id)", ng-mouseover="hovering=true", ng-mouseleave="hovering=false")
                   img(ng-src="/media/images/icons/spam.svg", ng-show="result.spamScore > 0.5")
                   .md-list-item-text

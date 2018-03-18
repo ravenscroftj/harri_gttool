@@ -6,11 +6,15 @@
     .factory('newsService', newsService);
 
   /* @ngInject */
-  function newsService($http, $log) {
+  function newsService($http, $log, authService) {
 
     var newsService = this;
 
     this.cache = {};
+
+    //add authentication to put and post request
+    $http.defaults.headers.post["Authentication-Token"] = authService.getAuthToken();
+    $http.defaults.headers.put["Authentication-Token"] = authService.getAuthToken();
 
     return {
 
@@ -76,15 +80,20 @@
     function checkSpam(articles) {
       var ids = articles.map( x => x.id );
 
-      return $http.get('/api/spamfilter', {"params":{
-        "articles": ids.join()
-      }});
+      console.log(authService.getAuthToken());
+
+      return $http.get('/api/spamfilter', {
+        
+        params:{"articles": ids.join()}
+      });
     }
 
     function filterSpam(articles) {
       var ids = articles.map( x => x.id );
 
-      return $http.post('/api/spamfilter', {"articles": ids.join()});
+      return $http.post('/api/spamfilter', 
+        {"articles": ids.join()}
+      );
     }
 
     /**

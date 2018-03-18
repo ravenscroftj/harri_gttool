@@ -5,6 +5,9 @@ import pickle
 from flask_restful import Resource, abort, fields, marshal_with, reqparse
 from flaskapp.model import NewsArticle, db
 
+from flask_security import auth_token_required
+
+
 article_fields = {
     "id": fields.Integer(),
     "title": fields.String(),
@@ -72,6 +75,7 @@ class SpamFilterResource(Resource):
 
         return results
 
+    @auth_token_required
     def post(self):
         """Apply spam filters"""
 

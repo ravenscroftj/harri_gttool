@@ -6,21 +6,21 @@
       .controller('HeaderCtrl', HeaderController);
 
   /* @ngInject */
-  function HeaderController($scope, $state, $sce, authService) {
+  function HeaderController($scope, $rootScope, $state, $sce, authService) {
 
     console.log("Are we authed?:", authService.isAuthenticated());
-    $scope.loggedIn = authService.isAuthenticated();
     $scope.user = authService.getUsername();
+    $rootScope.loggedIn = authService.isAuthenticated();
 
     $scope.$on("user:loggedIn", function(profile){
 
-      $scope.loggedIn = true;
+      $rootScope.loggedIn = true;
       $scope.user = authService.getUsername();
 
     });
 
     $scope.$on('user:loggedOut', function(){
-      $scope.loggedIn = false;
+      $rootScope.loggedIn = false;
       $scope.user = null;
     });
 
