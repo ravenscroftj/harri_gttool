@@ -2,10 +2,20 @@ from flask import Flask, send_from_directory
 from .model import db, User, Role
 
 from flask_security import Security, SQLAlchemyUserDatastore
+from flask_mail import Mail
+
+from flask_security.forms import RegisterForm
+from wtforms.fields import StringField
+from wtforms.validators import Required
+
+
 
 # Setup Flask-Security
 security = Security()
 
+# define extended registration form
+class ExtendedRegisterForm(RegisterForm):
+    full_name = StringField('Full Name', [Required()])
 
 def create_app():
     """Create app """
@@ -29,12 +39,15 @@ def create_app():
     app.register_blueprint(app_views)
     app.register_blueprint(api_bp)
 
+    # register SMTP feature
+    mail = Mail(app)
+
     # register database
     db.init_app(app)
 
     #register security
     datastore =  SQLAlchemyUserDatastore(db, User, Role)
-    security.init_app(app, datastore)
+    security.init_app(app, datastore, register_form=ExtendedRegisterForm)
 
     return app
 

@@ -29,3 +29,15 @@ SECURITY_PASSWORD_SALT = 'test'
 WTF_CSRF_ENABLED = False
 
 SECRET_KEY="something top secret"
+
+app.config['SOCIAL_GOOGLE'] = {
+    'consumer_key': 'xxxx',
+    'consumer_secret': 'xxxx'
+}
+
+#config for smtp
+MAIL_SERVER='smtp.example.com'
+MAIL_PORT=465
+MAIL_USE_SSL = True
+MAIL_USERNAME="tets"
+MAIL_PASSWORD="password"
