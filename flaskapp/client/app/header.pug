@@ -1,0 +1,11 @@
+md-card(flex, layout-padding)
+    
+    div(ng-show="loggedIn", layout="col")
+        div(flex="75") Hello {{user}} 
+        div(flex="25", layout="col", layout-align="end center")
+            a(ui-sref="main.logout") Logout
+
+          
+    div(ng-show="!loggedIn")
+        p Welcome Guest. You are free to browse but to add links, you need to log in 
+            a(ui-sref="main.login",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") here

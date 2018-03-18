@@ -5,6 +5,8 @@
     .module('app', [
       // Angular libraries.
       'ngAnimate', 'ngSanitize', 'ngMessages', 'ngAria',
+      // local storage library
+      'ngStorage',
       // External libraries.
       'ui.router', 'ngMaterial',
       // Basic app blocks.
@@ -12,7 +14,7 @@
       // Components,
       'app.components',
       // Feature modules.
-      'app.chat', 'app.search', 'app.news', 'app.news.article'
+      'app.auth', 'app.chat', 'app.search', 'app.news', 'app.news.article', 'app.header'
     ])
     .run(setGlobalState);
 

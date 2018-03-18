@@ -31,78 +31,123 @@
       {
         state: 'main',
         config: {
+          url: '',
+          params: defineParams(),
+          abstract: true,
+          views:{
+            header:{
+              templateUrl: '/media/build/header.html',
+              controller: 'HeaderCtrl'
+            },
+          }
+        }
+      },
+      {
+        state: 'index',
+        config:{
           url: '/?page&filter',
-          templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm',
+          params: defineParams(),
+          views:{
+            header:{
+              templateUrl: '/media/build/header.html',
+              controller: 'HeaderCtrl'
+            },
+            "container@":{
+              templateUrl: '/media/build/news/news.html',
+              controller: 'NewsController as newsVm',
+            }
+          }
+        }
+      },
+      {
+        state: 'main.logout',
+        config: {
+          url:'/auth/logout',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/auth/login.html',
+              controller: 'AuthController as authVm',
+            }
+          },
           params: defineParams()
         }
       },
       {
-        state: 'news',
+        state: 'main.login',
+        config: {
+          url:'/auth/login',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/auth/login.html',
+              controller: 'AuthController as authVm',
+            }
+          },
+          params: defineParams()
+        }
+      },
+      {
+        state: 'main.news',
         config: {
           url:'/news?page&filter',
-          templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/news/news.html',
+              controller: 'NewsController as newsVm',
+            }
+          },
           params: defineParams()
         }
       },
       {
-        state: 'news.hidden',
+        state: 'main.news.hidden',
         config: {
           url:'/hidden',
-          templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/news/news.html',
+              controller: 'NewsController as newsVm',
+            }
+          },
           params: defineParams()
         }
       },
       {
-        state: 'news.linked',
+        state: 'main.news.linked',
         config: {
           url:'/linked',
-          templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/news/news.html',
+              controller: 'NewsController as newsVm',
+            }
+          },
           params: defineParams()
         }
       },
       {
-        state: 'news.spam',
+        state: 'main.news.spam',
         config: {
           url:'/spam',
-          templateUrl: '/media/build/news/news.html',
-          controller: 'NewsController as newsVm',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/news/news.html',
+              controller: 'NewsController as newsVm',
+            }
+          },
           params: defineParams()
         }
       },
       {
-        state: 'news.article',
+        state: 'main.news.article',
         config: {
           url:'/{articleID:[0-9]+}',
-          templateUrl: '/media/build/article/article.html',
-          controller: 'ArticleController as newsVm'
-        }
-      },
-      {
-        state: 'search',
-        config: {
-          url: '/search',
-          templateUrl: '/media/build/search/search.html',
-          controller: 'SearchController as searchVm'
-        }
-      },
-      {
-        state: 'search.term',
-        config: {
-          url: '/{term:\\w*}',
-          templateUrl: '/media/build/search/search.html',
-          controller: 'SearchController as searchVm'
-        }
-      },
-      {
-        state: 'chat',
-        config: {
-          url: '/chat',
-          templateUrl: '/media/build/chat/chat.html',
-          controller: 'ChatController as chatVm'
+          views:{
+            "container@":{
+              templateUrl: '/media/build/article/article.html',
+              controller: 'ArticleController as newsVm'
+            }
+          },
+          params: defineParams()
         }
       }
     ];
