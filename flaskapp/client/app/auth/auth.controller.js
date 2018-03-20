@@ -28,12 +28,13 @@
             }
 
             authService.register(formdata)
+                .then(function(result){
+                    $scope.registered = true;
+                })
                 .catch(function(response){
                     $scope.errorMessages = response.data.response.errors;
                 })
-                .then(function(result){
-                    console.log(result);
-                });
+
         }
 
         $scope.login = function(){

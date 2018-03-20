@@ -8,6 +8,7 @@
                 span.md-headline Register for HarriGT
 
         md-content(layout-padding, ng-show="registered")
+            p Thank you for signing up to HarriGT {{email}}. You will receive a welcome email. Please check your spam folder
 
         md-content(layout-padding, ng-show="!registered")
             md-toolbar.md-warn(ng-show="errorMessage") {{errorMessage}}

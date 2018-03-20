@@ -46,10 +46,13 @@
 
                         if($localStorage.isAuthenticated) {
                             $localStorage.userProfile = result.response.user;
-                            $localStorage.userProfile.username = username;
+                            $localStorage.userProfile.username = formdata.email;
                         }
 
-                        Promise.resolve($localStorage.userProfile);
+                        //alert subsystems to the fact that we signed in
+                        $rootScope.$broadcast('user:loggedIn');
+
+                        return Promise.resolve($localStorage.userProfile);
                     });
 
             },
