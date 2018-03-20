@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory
 from .model import db, User, Role
 
-from flask_security import Security, SQLAlchemyUserDatastore
+from flask_security import SQLAlchemyUserDatastore
 from flask_mail import Mail
 
 from flask_security.forms import RegisterForm
@@ -9,9 +9,7 @@ from wtforms.fields import StringField
 from wtforms.validators import Required
 
 
-
-# Setup Flask-Security
-security = Security()
+from .security import security
 
 # define extended registration form
 class ExtendedRegisterForm(RegisterForm):
@@ -47,7 +45,7 @@ def create_app():
 
     #register security
     datastore =  SQLAlchemyUserDatastore(db, User, Role)
-    security.init_app(app, datastore, register_form=ExtendedRegisterForm)
+    security.init_app(app, datastore, confirm_register_form=ExtendedRegisterForm)
 
     return app
 

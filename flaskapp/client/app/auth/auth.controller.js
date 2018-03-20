@@ -13,10 +13,28 @@
         $scope.authFailed = false;
         $scope.loggedOut = false;
         $rootScope.loggedIn = false;
+        $rootScope.registered = false;
 
         $scope.logout = function(){
             return authService.logout();
         };
+
+        $scope.register = function(){
+            var formdata = {
+                "email": $scope.email,
+                "password": $scope.password,
+                "password_confirm": $scope.password2,
+                "full_name": $scope.fullname
+            }
+
+            authService.register(formdata)
+                .catch(function(response){
+                    $scope.errorMessages = response.data.response.errors;
+                })
+                .then(function(result){
+                    console.log(result);
+                });
+        }
 
         $scope.login = function(){
             

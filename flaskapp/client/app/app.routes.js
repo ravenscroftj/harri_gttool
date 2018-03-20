@@ -73,6 +73,19 @@
         }
       },
       {
+        state: 'main.register',
+        config: {
+          url:'/auth/register',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/auth/register.html',
+              controller: 'AuthController as authVm',
+            }
+          },
+          params: defineParams()
+        }
+      },
+      {
         state: 'main.login',
         config: {
           url:'/auth/login',

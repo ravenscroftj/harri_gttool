@@ -25,6 +25,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
+    full_name = db.Column(db.String(255))
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
 
@@ -46,7 +47,10 @@ news_paper_links = db.Table('article_papers',
                                       primary_key=True),
                             db.Column('paper_id', db.Integer,
                                       db.ForeignKey('papers.paper_id'),
-                                      primary_key=True)
+                                      primary_key=True),
+                            db.Column('user_id', db.Integer, 
+                                        db.ForeignKey('user.id'), 
+                                        primary_key=True)
                             )
 
 

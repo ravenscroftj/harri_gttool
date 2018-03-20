@@ -1,0 +1,45 @@
+#news
+    md-content(layout="row")
+      md-card#news-card(flex="grow")
+        md-toolbar
+            .md-toolbar-tools
+                //md-button.md-icon-button(aria-label="Back", ui-sref="main")
+                //    md-icon(md-svg-icon="/media/images/icons/back.svg")
+                span.md-headline Register for HarriGT
+
+        md-content(layout-padding, ng-show="registered")
+
+        md-content(layout-padding, ng-show="!registered")
+            md-toolbar.md-warn(ng-show="errorMessage") {{errorMessage}}
+            md-toolbar.md-accent(ng-show="loggedOut") You have just logged out.
+
+            p To contribute to HarriGT corpus you must register an account.
+            form(name="regForm", ng-submit="register()")
+                div(layout="column")
+                    md-input-container
+                        label Full Name
+                        input(required, md-no-asterisk, name="fullname", ng-model="fullname", minlength="10")
+                        div(ng-messages="regForm.fullname.$error", role="alert")
+                            //div(ng-message="required") You must provide your full name.
+                            div(ng-message-exp="['required','minlength']")  You must provide your full name
+                    md-input-container
+                        label Email Address
+                        input(required, md-no-asterisk, name="email", ng-model="email", ng-pattern="/^.+@.+\..+$/") 
+                        small.error(ng-show="errorMessages.email",ng-bind="errorMessages.email[0]")
+                        div(ng-messages="regForm.email.$error", role="alert")
+                            div(ng-message-exp="['required','pattern']") Please provide a valid email address.
+                            div(ng-message="taken") The given email address is already assigned to someone.
+                    md-input-container
+                        label Password
+                        input(required, type="password", md-no-asterisk, name="password", ng-model="password", minlength="8")
+                        div(ng-messages="regForm.password.$error", role="alert")
+                            div(ng-message-exp="['required','minlength']") You must provide a password at least 8 characters long
+                    md-input-container
+                        label Confirm Password
+                        input(required, type="password", md-no-asterisk, name="password2", ng-model="password2", password-verify="password")
+                        div(ng-messages="regForm.password2.$error", role="alert")
+                            div(ng-message="required,myPwdInvalid") Your passwords must match
+                    div
+                        md-button.md-primary(md-no-ink, type="submit", ng-disabled="loggingIn") Sign Up
+                        md-progress-circular(md-mode="indeterminate" ng-show="loggingIn")
+            

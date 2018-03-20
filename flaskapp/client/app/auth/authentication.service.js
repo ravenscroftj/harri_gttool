@@ -37,12 +37,29 @@
                 }
             },
 
+            register: function(formdata){
+                return $http.post('/security/register', formdata)
+                    .then(function(response){
+                        var result = response.data;
+
+                        $localStorage.isAuthenticated = (result.meta.code == 200);
+
+                        if($localStorage.isAuthenticated) {
+                            $localStorage.userProfile = result.response.user;
+                            $localStorage.userProfile.username = username;
+                        }
+
+                        Promise.resolve($localStorage.userProfile);
+                    });
+
+            },
+
             /**
              * Call POST endpoint to log in to API 
              */
             login: function(username, password){
 
-                return $http.post('/login', {
+                return $http.post('/security/login', {
                     "email": username,
                     "password": password
                   }).then(function(response){
@@ -77,7 +94,7 @@
 
             logout: function(){
 
-                return $http.get("/logout")
+                return $http.get("/security/logout")
                     .then(function(){
                         delete $localStorage.isAuthenticated;
                         delete $localStorage.userToken;

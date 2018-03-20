@@ -265,7 +265,7 @@ def get_scopus_results(author, inst, pubdate):
 
 
         #lets inspect the first 3 results - more than that probably isn't useful
-        for item in r.json()['search-results']['entry'][:3]:
+        for item in r.json()['search-results']['entry'][:5]:
 
             ent = {}
             if 'error' in item and item['error'] == "Result set was empty":
