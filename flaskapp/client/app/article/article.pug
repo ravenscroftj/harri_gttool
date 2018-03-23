@@ -93,11 +93,12 @@
                     
           // buttons for accepting or 
           section(layout="row", layout-wrap, layout-align="center center")
-            md-button.md-raised(class="{{candidate.linked? 'md-warn' : 'md-primary'}}", 
+            md-button.md-raised(ng-show="loggedIn", class="{{candidate.linked? 'md-warn' : 'md-primary'}}", 
                                 ng-click="candidateLinkToggle(article, candidate)",
                                 ng-disabled="linkingCandidate") {{candidate.linked ? "Unlink Candidate From Article" : "Link Candidate to Article"}}
             md-progress-circular(md-mode="indeterminate" ng-show="linkingCandidate")
-          
+            p(ng-show="!loggedIn") You must log in to link news articles to candidate works.
+    
             
   //side panel for article view
   md-content.md-padding(layout="column")  
