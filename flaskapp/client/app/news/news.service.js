@@ -6,15 +6,25 @@
     .factory('newsService', newsService);
 
   /* @ngInject */
-  function newsService($http, $log, authService) {
+  function newsService($http, $rootScope, $log, authService) {
 
     var newsService = this;
 
     this.cache = {};
 
-    //add authentication to put and post request
-    $http.defaults.headers.post["Authentication-Token"] = authService.getAuthToken();
-    $http.defaults.headers.put["Authentication-Token"] = authService.getAuthToken();
+    function checkAuthToken(){
+      console.log("HTTP client auth token updated")
+      //add authentication to put and post request
+      $http.defaults.headers.common["Authentication-Token"] = authService.getAuthToken();
+    }
+
+    // subscribe to security updates so that we can use secure endpoints
+    $rootScope.$on('user:loggedIn', checkAuthToken);
+    $rootScope.$on('user:loggedOut',checkAuthToken);
+
+    // on first run check auth tokens
+    checkAuthToken();
+
 
     return {
 

@@ -3,7 +3,9 @@ from datetime import datetime
 import spacy
 import hashlib
 
-from flaskapp.model import Entity, NewsArticle, db, ScientificPaper, AcademicAuthor
+from flask_security.core import current_user
+from flask_security import auth_token_required
+from flaskapp.model import Entity, NewsArticle, db, ScientificPaper, AcademicAuthor, ArticlePaper
 
 from .mskg import find_candidate_papers
 
@@ -83,10 +85,16 @@ def link_news_candidate(article, doi):
         if not found_match:
             raise NoSuchCandidateException("Could not find candidate with doi={}".format(doi))
 
+    link = ArticlePaper(article=article, paper=paper, user=current_user)
+    db.session.add(link)
+
     # now we create the link
-    article.papers.append(paper)
+    article.links.append(link)
+    #article.papers.append(paper)
 
     db.session.commit()
+
+    print(paper)
 
     return paper
 

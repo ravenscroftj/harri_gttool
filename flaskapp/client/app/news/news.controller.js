@@ -54,7 +54,7 @@
 
 
     $scope.newsClick = function(articleID){
-      $state.go('.article', {
+      $state.go('main.news.article', {
         articleID: articleID
       });
     };

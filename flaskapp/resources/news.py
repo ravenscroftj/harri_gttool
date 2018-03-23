@@ -5,6 +5,7 @@ import dateutil.parser
 from flask_restful import Resource, abort, fields, marshal_with, reqparse
 from flaskapp.model import NewsArticle, db
 from flaskapp.services.mskg import find_candidate_papers
+from flask_security import auth_token_required
 
 from sqlalchemy.sql import select
 
@@ -128,6 +129,7 @@ paper_fields = {
 
 class NewsArticleLinkResource(Resource):
 
+    @auth_token_required
     def delete(self, article_id, paper_id):
         """Remove a link between an article and a scientific paper"""
 
@@ -152,6 +154,7 @@ class NewsArticleLinksResource(Resource):
                           help="You must provide DOI to link")
 
     @marshal_with(paper_fields)
+    @auth_token_required
     def post(self, article_id):
         """Create a new link between an article an a scientific paper."""
         args = self.reqparser.parse_args()

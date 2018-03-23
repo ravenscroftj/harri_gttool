@@ -51,6 +51,14 @@ class ArticlePaper(db.Model):
 
     user_id = db.Column('user_id', db.Integer, 
         db.ForeignKey('user.id'), nullable=True)
+
+    article = db.relationship('NewsArticle', 
+        backref=db.backref('links', lazy=True))
+
+    paper = db.relationship('ScientificPaper', 
+        backref=db.backref('links', lazy=True))
+
+    user = db.relationship('User')
                             
 
 
