@@ -127,9 +127,9 @@
     function loadFromState() {
 
       $scope.isHiding = {};
-      $scope.hidden = $state.current.name == "news.hidden";
-      $scope.linked = $state.current.name == "news.linked";
-      $scope.spam =  $state.current.name == "news.spam";
+      $scope.hidden = $state.current.name == "main.news.hidden";
+      $scope.linked = $state.current.name == "main.news.linked";
+      $scope.spam =  $state.current.name == "main.news.spam";
       $scope.newsFilter = $state.params.filter;
 
       if($scope.hidden){
