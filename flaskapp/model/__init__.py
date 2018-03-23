@@ -41,17 +41,22 @@ paper_authors = db.Table('paper_authors',
                                    primary_key=True)
                          )
 
-news_paper_links = db.Table('article_papers',
-                            db.Column('article_id', db.Integer,
-                                      db.ForeignKey('articles.article_id'),
-                                      primary_key=True),
-                            db.Column('paper_id', db.Integer,
-                                      db.ForeignKey('papers.paper_id'),
-                                      primary_key=True),
-                            db.Column('user_id', db.Integer, 
-                                        db.ForeignKey('user.id'), 
-                                        primary_key=True)
-                            )
+class ArticlePaper:
+
+    __tablename__ = "article_papers"
+
+
+    article_id = db.Column('article_id', db.Integer, 
+        db.ForeignKey('articles.article_id'), 
+        primary_key=True),
+
+    paper_id = db.Column('paper_id', db.Integer, 
+        db.ForeignKey('papers.paper_id'), 
+        primary_key=True)
+
+    user_id = db.Column('user_id', db.Integer, 
+        db.ForeignKey('user.id'), nullable=True)
+                            
 
 
 class NewsArticle(db.Model):
@@ -71,7 +76,7 @@ class NewsArticle(db.Model):
     publish_date = db.Column(db.DateTime)
 
     papers = db.relationship('ScientificPaper',
-                             secondary=news_paper_links,
+                             secondary=ArticlePaper,
                              backref=db.backref('articles', lazy=True))
 
     hidden = db.Column("hidden", db.Boolean, server_default='0')

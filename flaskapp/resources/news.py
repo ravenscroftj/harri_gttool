@@ -8,7 +8,7 @@ from flaskapp.services.mskg import find_candidate_papers
 
 from sqlalchemy.sql import select
 
-from ..model import ScientificPaper, news_paper_links
+from ..model import ScientificPaper, ArticlePaper
 from ..services.news import link_news_candidate
 
 article_fields = {
@@ -65,9 +65,9 @@ class NewsArticleListResource(Resource):
 
 
         if args.linked == "true":
-            r = r.filter(NewsArticle.id.in_(select([news_paper_links.c.article_id])))
+            r = r.filter(NewsArticle.id.in_(select([ArticlePaper.article_id])))
         else:
-            r = r.filter(~NewsArticle.id.in_(select([news_paper_links.c.article_id])))
+            r = r.filter(~NewsArticle.id.in_(select([ArticlePaper.article_id])))
 
         articles = r.offset(args.offset).limit(min(args.limit, 100)).all()
 
