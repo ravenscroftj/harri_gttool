@@ -1,4 +1,4 @@
-"""empty message
+"""Create links between news articles and scientific papers
 
 Revision ID: 548c6b66b8e3
 Revises: a12e86de073c

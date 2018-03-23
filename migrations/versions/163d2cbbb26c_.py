@@ -1,4 +1,4 @@
-"""empty message
+"""Create hidden column and extend max length of institution
 
 Revision ID: 163d2cbbb26c
 Revises: ab2931050095

@@ -1,4 +1,4 @@
-"""empty message
+"""Add full name attribute to user column
 
 Revision ID: f17c4a77b188
 Revises: 065f56c4a6e7

@@ -1,4 +1,4 @@
-"""empty message
+"""Add Institution name column to authors
 
 Revision ID: ab2931050095
 Revises: 548c6b66b8e3

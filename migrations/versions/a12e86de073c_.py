@@ -1,4 +1,4 @@
-"""empty message
+"""Initial creation of schema
 
 Revision ID: a12e86de073c
 Revises: 

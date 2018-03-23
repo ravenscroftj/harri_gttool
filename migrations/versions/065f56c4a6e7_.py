@@ -1,4 +1,4 @@
-"""empty message
+"""Add user and role tables
 
 Revision ID: 065f56c4a6e7
 Revises: 99311e4ac0fe

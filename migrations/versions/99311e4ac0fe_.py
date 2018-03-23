@@ -1,4 +1,4 @@
-"""empty message
+"""Add spam field for articles
 
 Revision ID: 99311e4ac0fe
 Revises: 163d2cbbb26c
