@@ -86,6 +86,7 @@ class NewsArticleResource(Resource):
 
         return article
 
+    @auth_token_required
     @marshal_with(article_fields)
     def put(self, article_id):
 

@@ -108,10 +108,12 @@
         md-card-title-text
           span.md-headline Article Information
       md-card-content(layout="column")
-        section(layout="row", layout-wrap, layout-align="center center")
+        section(layout="row", layout-wrap, layout-align="center center", ng-show="loggedIn")
           md-button.md-raised(ng-click="articleToggleHidden(article)", ng-disabled="hiding")  {{article.hidden ? "Unhide Article" : "Hide Article"}}
           md-button.md-raised(ng-click="articleToggleSpam(article)", ng-disabled="hiding")  {{article.spam ? "Unspam Article" : "Spam Article"}}
           md-progress-circular(md-mode="indeterminate" ng-show="hiding")
+        section(layout="row", layout-wrap, layout-align="center center", ng-show="!loggedIn")
+          p Please log in to spam or hide this article.
             
         div(layout="column", flex)
           md-list(flex)
