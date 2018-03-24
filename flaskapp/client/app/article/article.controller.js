@@ -223,9 +223,19 @@
 
       var result = newsService.getArticle(articleVm.articleID)
       .then(function(data){
-            data.content = data.content.replace(/\n/g,'<br>');
+
+
+            if(!data.content){
+              data.content = $sce.trustAsHtml('<p>Full text not available for display in HarriGT. Please <a href="' + data.url 
+              + '" target="_blank">visit article website to read.</p>');
+            }else{
+              data.content = data.content.replace(/\n/g,'<br>');
+            }
+
+            
 
             console.log("Got article data");
+
             $scope.article = data;
 
             return Promise.resolve();

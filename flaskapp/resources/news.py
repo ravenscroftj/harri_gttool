@@ -6,11 +6,14 @@ from flask_restful import Resource, abort, fields, marshal_with, reqparse
 from flaskapp.model import NewsArticle, db
 from flaskapp.services.mskg import find_candidate_papers
 from flask_security import auth_token_required
+from flask_security.core import current_user
 
 from sqlalchemy.sql import select
 
 from ..model import ScientificPaper, ArticlePaper
 from ..services.news import link_news_candidate
+
+ROLE_FULL_TEXT_ACCESS = "full_text_access"
 
 article_fields = {
     "id": fields.Integer(),
@@ -72,6 +75,10 @@ class NewsArticleListResource(Resource):
 
         articles = r.offset(args.offset).limit(min(args.limit, 100)).all()
 
+        if not current_user.has_role(ROLE_FULL_TEXT_ACCESS):
+            for article in articles:
+                article.text = None
+
         return {"total_count": r.count(), "articles": articles}
 
 class NewsArticleResource(Resource):
@@ -80,6 +87,10 @@ class NewsArticleResource(Resource):
     def get(self, article_id):
 
         article = NewsArticle.query.get(article_id)
+
+
+        if not current_user.has_role(ROLE_FULL_TEXT_ACCESS):
+            article.text = None
 
         if article is None:
             abort(404)

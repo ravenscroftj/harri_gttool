@@ -10,7 +10,7 @@
                 span.md-headline News Match
         md-card-content#articleContent
             h1 {{article.title}}
-            md-content(flex, layout-padding, layout="columns")
+            md-content(flex, layout-padding, layout="column")
               .content(ng-bind-html="article.content", flex=70)
                 
     // candidate matcher panel - hidden when individual candidate is shown
