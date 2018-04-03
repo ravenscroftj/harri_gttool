@@ -185,14 +185,17 @@ class NewsArticleLinkResource(Resource):
     def delete(self, article_id, paper_id):
         """Remove a link between an article and a scientific paper"""
 
-        article = NewsArticle.query.get(article_id)
+        q = ArticlePaper.query\
+            .filter(ArticlePaper.article_id==article_id, 
+                    ArticlePaper.paper_id==paper_id, ArticlePaper.user_id == current_user.id)
 
-        if article is None:
+        if q.count() < 1:
             abort(404)
+        
+        link = q.first()
 
-        for paper in article.papers:
-            if paper.id == paper_id:
-                article.papers.remove(paper)
+        #remove the link from paper and article
+        db.session.delete(link)
 
         db.session.commit()
 
