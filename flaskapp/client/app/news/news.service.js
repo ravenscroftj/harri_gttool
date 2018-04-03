@@ -53,7 +53,7 @@
       },
 
       getPeople: function(articleID){
-        return getData('/api/news/' + articleID + '/people');
+        return getData('/api/news/' + articleID + '/people?grouped=true');
       },
 
       getLinkedArticles: function(articleID){
