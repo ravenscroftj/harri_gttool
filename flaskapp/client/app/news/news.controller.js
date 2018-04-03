@@ -129,6 +129,7 @@
       $scope.isHiding = {};
       $scope.hidden = $state.current.name == "main.news.hidden";
       $scope.linked = $state.current.name == "main.news.linked";
+      $scope.review = $state.current.name == "main.news.review";
       $scope.spam =  $state.current.name == "main.news.spam";
       $scope.newsFilter = $state.params.filter;
 
@@ -138,6 +139,8 @@
         newsVm.title = "Linked Articles";
       }else if ($scope.spam) {
         newsVm.title = "Spam Articles";
+      }else if($scope.review) {
+        newsVm.title = "Review Articles";
       }
 
       console.log("Load news state", $state.current.name)
@@ -152,7 +155,7 @@
       console.log($scope.hidden, $scope.linked, $scope.spam);
 
       $scope.isLoading = true;
-      newsService.getNews($scope.hidden, $scope.linked, $scope.spam, offset, $scope.newsFilter).then(function(data){
+      newsService.getNews($scope.hidden, $scope.linked, $scope.review, $scope.spam, offset, $scope.newsFilter).then(function(data){
         console.log("Got some news");
         $scope.isLoading = false;
         $scope.newsArticles = data.articles;

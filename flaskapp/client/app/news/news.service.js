@@ -182,11 +182,12 @@
     }
 
 
-    function getNews(hidden,linked, spam, offset, filter) {
+    function getNews(hidden,linked, review, spam, offset, filter) {
 
       return $http.get('/api/news', {"params":{
         "hidden": hidden,
         "linked": linked,
+        "review": review,
         "spam":spam,
         "offset":  offset,
         "urlfilter": filter
