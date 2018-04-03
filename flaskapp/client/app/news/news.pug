@@ -11,11 +11,18 @@
         md-toolbar.md-warn(ng-show="errorMessage", layout="row", layout-align="center center")
           p {{errorMessage}}
 
-        md-card-content(layout="column")
+
+        md-card-content(layout="column", ng-show="$state.current.name == 'main.news.review' && !loggedIn")
+          p This page is used to display the user review queue. You must be logged in to see your review queue.
+
+        md-card-content(layout="column", ng-show="!($state.current.name == 'main.news.review' && !loggedIn)")
 
 
             section(flex, layout="row". layout-padding)
               Showing {{offset+1}} to {{maxOffset}} of {{newsVm.total_count}} articles.
+
+
+
             md-list#newsList
               md-subheader.md-no-sticky News Articles
 

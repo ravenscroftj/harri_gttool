@@ -45,7 +45,7 @@ html(lang="en", ng-app="app")
 
               md-content(role="navigation", flex, layout-padding, layout="column")
                 a(ui-sref="main.news({page:1, reload:true})", ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") News
-                a(ui-sref="main.news.review({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Review Linked News
+                a(ui-sref="main.news.review({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active" ng-show="loggedIn") Review Linked News
                 a(ui-sref="main.news.linked({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Linked News
                 a(ui-sref="main.news.hidden({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Hidden News
                 a(ui-sref="main.news.spam({page:1, reload: true})",ui-sref-opts="{reload: true, notify: true}", ui-sref-active="active") Spam News
