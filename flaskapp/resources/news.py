@@ -9,6 +9,7 @@ from flask_security import auth_token_required
 from flask_security.core import current_user
 
 from sqlalchemy.sql import select
+from sqlalchemy import func, and_
 
 from ..model import ScientificPaper, ArticlePaper
 from ..services.news import link_news_candidate
@@ -53,23 +54,53 @@ class NewsArticleListResource(Resource):
                             choices=['true', 'false'],
                             location='args')
 
+        parser.add_argument('review', default="false",
+                            choices=['true', 'false'],
+                            location='args')
+
         args = parser.parse_args()
 
+        # use boolean comparisons to convert string "true"/"false" vals into bool type
         args.hidden = args.hidden == "true"
-
+ 
         args.spam = args.spam == "true"
 
+
+        #query for articles that the current user has seen
+        userlist = db.session.query(ArticlePaper.article_id)\
+            .filter(ArticlePaper.user_id == current_user.id)
+
+        # add query for getting articles that have are not passed IAA
+        linked = db.session.query(ArticlePaper.article_id)\
+            .group_by(ArticlePaper.article_id)\
+            .having(and_(func.count(ArticlePaper.user_id.distinct()) > 0, func.count(ArticlePaper.user_id.distinct()) < 3))
+
+        # query for articles that have been linked and have passed IAA
+        linked_and_reviewed = db.session.query(ArticlePaper.article_id)\
+            .group_by(ArticlePaper.article_id)\
+            .having(func.count(ArticlePaper.user_id.distinct()) > 2)
+
+        # add select filters for hidden and spam states
         r = NewsArticle.query\
             .filter(NewsArticle.hidden==args.hidden)\
             .filter(NewsArticle.spam==args.spam)
+
 
         if args.urlfilter != "":
             r = r.filter(NewsArticle.url.like("%{}%".format(args.urlfilter)))
 
 
-
+        # if linked then show all linked articles that the user is allowed to see
         if args.linked == "true":
-            r = r.filter(NewsArticle.id.in_(select([ArticlePaper.article_id])))
+
+            r = r.filter(NewsArticle.id.in_(linked_and_reviewed.union(userlist)))
+
+        #deal with review
+        elif args.review == "true":
+            #we want articles that have one or more links but that the user hasn't seen
+            r = r.filter(NewsArticle.id.in_(linked)).filter(~NewsArticle.id.in_(userlist))
+
+        # default case -show 'new' articles that need to be tagged - news has no ArticlePapers
         else:
             r = r.filter(~NewsArticle.id.in_(select([ArticlePaper.article_id])))
 
