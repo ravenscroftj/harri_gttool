@@ -216,6 +216,8 @@ class NewsArticleLinksResource(Resource):
     reqparser = reqparse.RequestParser()
     reqparser.add_argument("candidate_doi", type=str, required=True,
                            help="You must provide DOI to link")
+    reqparser.add_argument('annotation_time', type=int, required=True, 
+                            help="You must say how long the annotation took in milliseconds")
 
     @marshal_with(paper_fields)
     @auth_token_required
@@ -228,7 +230,7 @@ class NewsArticleLinksResource(Resource):
         if article is None:
             abort(404)
 
-        return link_news_candidate(article, args.candidate_doi)
+        return link_news_candidate(article, args.candidate_doi, args.annotation_time)
 
     @marshal_with(paper_fields)
     def get(self, article_id):

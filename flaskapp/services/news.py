@@ -62,7 +62,7 @@ def generate_paper_from_mskg(candidate, doi):
 
 
 
-def link_news_candidate(article, doi):
+def link_news_candidate(article, doi, timetaken):
     """Link an article to a given doi"""
 
     # check to see if paper already in db
@@ -85,7 +85,7 @@ def link_news_candidate(article, doi):
         if not found_match:
             raise NoSuchCandidateException("Could not find candidate with doi={}".format(doi))
 
-    link = ArticlePaper(article=article, paper=paper, user=current_user)
+    link = ArticlePaper(article=article, paper=paper, user=current_user, annotation_time=timetaken)
     db.session.add(link)
 
     # now we create the link

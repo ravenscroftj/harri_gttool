@@ -52,6 +52,9 @@ class ArticlePaper(db.Model):
     user_id = db.Column('user_id', db.Integer, 
         db.ForeignKey('user.id'), nullable=True, primary_key=True)
 
+    # length of time (in milliseconds) taken to annotate the article
+    annotation_time = db.Column('annotation_time', db.Integer)
+
     article = db.relationship('NewsArticle', 
         backref=db.backref('links', lazy=True))
 
@@ -59,6 +62,7 @@ class ArticlePaper(db.Model):
         backref=db.backref('links', lazy=True))
 
     user = db.relationship('User')
+    
                             
 
 

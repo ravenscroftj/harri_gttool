@@ -154,9 +154,10 @@
     /**
     * Make an API call to link a news article to a candidate paper
     */
-    function linkCandidate(article, candidate){
+    function linkCandidate(article, candidate, timeLength){
         return $http.post('/api/news/' + article.id + '/links', {
-          "candidate_doi": candidate.doi
+          "candidate_doi": candidate.doi,
+          "annotation_time": timeLength
         })
         .catch(function (error){
           $log.error('XHR failed for save link ' + error.data);
