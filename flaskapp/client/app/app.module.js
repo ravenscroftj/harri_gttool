@@ -36,7 +36,7 @@
     //$trace.enable('TRANSITION')
 
     // enable review process by default
-    $rootScope.reviewProcessEnabled = false;
+    $rootScope.reviewProcessEnabled = true;
   }
 
 

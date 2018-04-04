@@ -79,12 +79,18 @@ class NewsArticleListResource(Resource):
 
         if current_app.config.get('REVIEW_PROCESS_ENABLED', True):
             min_iaa_users = current_app.config.get('REVIEW_MIN_IAA', 3)
+            blacklisted_iaa_users = current_app.config.get('REVIEW_USER_BLACKLIST', [])
         else:
             min_iaa_users = 1
+            blacklisted_iaa_users = []
+
+        
+
 
 
         # add query for getting articles that have are not passed IAA
         linked = db.session.query(ArticlePaper.article_id)\
+            .filter(~ArticlePaper.user_id.in_(blacklisted_iaa_users))\
             .group_by(ArticlePaper.article_id)\
             .having(and_(func.count(ArticlePaper.user_id.distinct()) > 0, 
                          func.count(ArticlePaper.user_id.distinct()) < min_iaa_users))
