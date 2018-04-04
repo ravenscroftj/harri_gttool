@@ -266,7 +266,7 @@
             console.log("User chose to continue timing");
           });
 
-      }, 10 * 1000);
+      }, 5 * 60 * 1000);
 
     }
 
