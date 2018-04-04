@@ -7,7 +7,7 @@
     .controller('ArticleController', ArticleController);
 
   /* @ngInject */
-  function ArticleController($scope, $state, $interval, $sce, $mdDialog, defaultTitle, newsService) {
+  function ArticleController($scope, $state, $interval, $sce, $transitions, $mdDialog, defaultTitle, newsService) {
     var articleVm = this;
 
     articleVm.title = defaultTitle;
@@ -226,6 +226,15 @@
 
     var linkCounterPromise = null;
 
+    $transitions.onExit({}, function(transition, state){
+
+      console.log("Cancelling link timer")
+      if(linkCounterPromise != null){
+        $interval.cancel(linkCounterPromise);
+        linkCounterPromise = null;
+      }
+    });
+
     /**
      * Start the link timer which is used to work out how long it takes a user to make a link
      */
@@ -258,6 +267,7 @@
           });
 
       }, 5 * 60 * 1000);
+
     }
 
     // Load local variables from the state (the URL of the page).
