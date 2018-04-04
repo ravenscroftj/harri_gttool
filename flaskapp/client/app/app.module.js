@@ -32,10 +32,11 @@
       $rootScope.isNavOpen = !$rootScope.isNavOpen;
     }
 
-    $trace.enable('TRANSITION')
+    // disable logging of transition states
+    //$trace.enable('TRANSITION')
 
-    $rootScope.loggedIn = "hello";
-
+    // enable review process by default
+    $rootScope.reviewProcessEnabled = false;
   }
 
 

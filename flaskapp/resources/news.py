@@ -2,6 +2,7 @@
 
 import dateutil.parser
 
+from flask import current_app
 from flask_restful import Resource, abort, fields, marshal_with, reqparse
 from flaskapp.model import NewsArticle, db
 from flaskapp.services.mskg import find_candidate_papers
@@ -76,15 +77,22 @@ class NewsArticleListResource(Resource):
                 .filter(ArticlePaper.user_id == None)
 
 
+        if current_app.config.get('REVIEW_PROCESS_ENABLED', True):
+            min_iaa_users = current_app.config.get('REVIEW_MIN_IAA', 3)
+        else:
+            min_iaa_users = 1
+
+
         # add query for getting articles that have are not passed IAA
         linked = db.session.query(ArticlePaper.article_id)\
             .group_by(ArticlePaper.article_id)\
-            .having(and_(func.count(ArticlePaper.user_id.distinct()) > 0, func.count(ArticlePaper.user_id.distinct()) < 3))
+            .having(and_(func.count(ArticlePaper.user_id.distinct()) > 0, 
+                         func.count(ArticlePaper.user_id.distinct()) < min_iaa_users))
 
         # query for articles that have been linked and have passed IAA
         linked_and_reviewed = db.session.query(ArticlePaper.article_id)\
             .group_by(ArticlePaper.article_id)\
-            .having(func.count(ArticlePaper.user_id.distinct()) > 2)
+            .having(func.count(ArticlePaper.user_id.distinct()) >= min_iaa_users)
 
         # add select filters for hidden and spam states
         r = NewsArticle.query\
@@ -226,10 +234,18 @@ class NewsArticleLinksResource(Resource):
     def get(self, article_id):
         """Return a list of papers and their dois linked to this article"""
         article = NewsArticle.query.get(article_id)
+        # if the article isn't valid then fail
+        if article is None:
+            abort(404)
 
         papers = ScientificPaper.query.join(ArticlePaper)\
             .filter( ArticlePaper.article_id == article_id)
         
+        if current_app.config.get('REVIEW_PROCESS_ENABLED', True):
+            min_iaa_users = current_app.config.get('REVIEW_MIN_IAA', 3)
+        else:
+            min_iaa_users = 1
+
         # check that the links were created by the current user
         if current_user.is_authenticated:
             papers = papers.filter(ArticlePaper.user_id == current_user.id)
@@ -240,17 +256,12 @@ class NewsArticleLinksResource(Resource):
         linked_iaa = db.session.query(ArticlePaper.paper_id)\
             .filter(ArticlePaper.article_id == article_id)\
             .group_by(ArticlePaper.article_id, ArticlePaper.paper_id)\
-            .having(func.count(ArticlePaper.article_id)>1)
-
-        print(ScientificPaper.query.filter(ScientificPaper.id.in_(linked_iaa)).all())
+            .having(func.count(ArticlePaper.article_id)>=min_iaa_users)
 
         papers = papers.union(ScientificPaper.query.filter(ScientificPaper.id.in_(linked_iaa)))
 
         # finally return the papers
         papers = papers.all()
-
-        if article is None:
-            abort(404)
 
         return papers
 
