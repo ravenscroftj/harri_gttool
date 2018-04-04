@@ -2,13 +2,15 @@
 
 import dateutil.parser
 
+from flask import current_app
 from flask_restful import Resource, abort, fields, marshal_with, reqparse
 from flaskapp.model import NewsArticle, db
 from flaskapp.services.mskg import find_candidate_papers
 from flask_security import auth_token_required
-from flask_security.core import current_user
+from flask_security.core import current_user, AnonymousUser
 
 from sqlalchemy.sql import select
+from sqlalchemy import func, and_
 
 from ..model import ScientificPaper, ArticlePaper
 from ..services.news import link_news_candidate
@@ -30,6 +32,7 @@ news_envelope = {
     "total_count": fields.Integer(),
     "articles": fields.Nested(article_fields)
 }
+
 
 class NewsArticleListResource(Resource):
     """List news articles stored in tool"""
@@ -53,25 +56,74 @@ class NewsArticleListResource(Resource):
                             choices=['true', 'false'],
                             location='args')
 
+        parser.add_argument('review', default="false",
+                            choices=['true', 'false'],
+                            location='args')
+
         args = parser.parse_args()
 
+        # use boolean comparisons to convert string "true"/"false" vals into bool type
         args.hidden = args.hidden == "true"
 
         args.spam = args.spam == "true"
 
+        if current_user.is_authenticated:
+            # query for articles that the current user has seen
+            userlist = db.session.query(ArticlePaper.article_id)\
+                .filter(ArticlePaper.user_id == current_user.id)
+        else:
+            # query for articles that the current user has seen
+            userlist = db.session.query(ArticlePaper.article_id)\
+                .filter(ArticlePaper.user_id == None)
+
+
+        if current_app.config.get('REVIEW_PROCESS_ENABLED', True):
+            min_iaa_users = current_app.config.get('REVIEW_MIN_IAA', 3)
+            blacklisted_iaa_users = current_app.config.get('REVIEW_USER_BLACKLIST', [])
+        else:
+            min_iaa_users = 1
+            blacklisted_iaa_users = []
+
+        
+
+
+
+        # add query for getting articles that have are not passed IAA
+        linked = db.session.query(ArticlePaper.article_id)\
+            .filter(~ArticlePaper.user_id.in_(blacklisted_iaa_users))\
+            .group_by(ArticlePaper.article_id)\
+            .having(and_(func.count(ArticlePaper.user_id.distinct()) > 0, 
+                         func.count(ArticlePaper.user_id.distinct()) < min_iaa_users))
+
+        # query for articles that have been linked and have passed IAA
+        linked_and_reviewed = db.session.query(ArticlePaper.article_id)\
+            .group_by(ArticlePaper.article_id)\
+            .having(func.count(ArticlePaper.user_id.distinct()) >= min_iaa_users)
+
+        # add select filters for hidden and spam states
         r = NewsArticle.query\
-            .filter(NewsArticle.hidden==args.hidden)\
-            .filter(NewsArticle.spam==args.spam)
+            .filter(NewsArticle.hidden == args.hidden)\
+            .filter(NewsArticle.spam == args.spam)
 
         if args.urlfilter != "":
             r = r.filter(NewsArticle.url.like("%{}%".format(args.urlfilter)))
 
-
-
+        # if linked then show all linked articles that the user is allowed to see
         if args.linked == "true":
-            r = r.filter(NewsArticle.id.in_(select([ArticlePaper.article_id])))
+
+            r = r.filter(NewsArticle.id.in_(
+                linked_and_reviewed.union(userlist)))
+
+        # deal with review
+        elif args.review == "true":
+            # we want articles that have one or more links but that the user hasn't seen
+            r = r.filter(NewsArticle.id.in_(linked)).filter(
+                ~NewsArticle.id.in_(userlist))
+
+        # default case -show 'new' articles that need to be tagged - news has no ArticlePapers
         else:
-            r = r.filter(~NewsArticle.id.in_(select([ArticlePaper.article_id])))
+            r = r.filter(~NewsArticle.id.in_(
+                select([ArticlePaper.article_id])))
 
         articles = r.offset(args.offset).limit(min(args.limit, 100)).all()
 
@@ -81,13 +133,13 @@ class NewsArticleListResource(Resource):
 
         return {"total_count": r.count(), "articles": articles}
 
+
 class NewsArticleResource(Resource):
     """News Article content and metadata"""
     @marshal_with(article_fields)
     def get(self, article_id):
 
         article = NewsArticle.query.get(article_id)
-
 
         if not current_user.has_role(ROLE_FULL_TEXT_ACCESS):
             article.text = None
@@ -102,8 +154,9 @@ class NewsArticleResource(Resource):
     def put(self, article_id):
 
         parser = reqparse.RequestParser()
-        parser.add_argument('hidden', default="false", choices=['true','false'])
-        parser.add_argument('spam', default="false", choices=['true','false'])
+        parser.add_argument('hidden', default="false",
+                            choices=['true', 'false'])
+        parser.add_argument('spam', default="false", choices=['true', 'false'])
         parser.add_argument('publish_date', default=None)
 
         args = parser.parse_args()
@@ -123,6 +176,7 @@ class NewsArticleResource(Resource):
         db.session.commit()
 
         return article
+
 
 author_fields = {
     "id": fields.Integer(),
@@ -145,25 +199,31 @@ class NewsArticleLinkResource(Resource):
     def delete(self, article_id, paper_id):
         """Remove a link between an article and a scientific paper"""
 
-        article = NewsArticle.query.get(article_id)
+        q = ArticlePaper.query\
+            .filter(ArticlePaper.article_id==article_id, 
+                    ArticlePaper.paper_id==paper_id, ArticlePaper.user_id == current_user.id)
 
-        if article is None:
+        if q.count() < 1:
             abort(404)
+        
+        link = q.first()
 
-        for paper in article.papers:
-            if paper.id == paper_id:
-                article.papers.remove(paper)
+        #remove the link from paper and article
+        db.session.delete(link)
 
         db.session.commit()
 
-        return {"message":"Removed link"}, 201
+        return {"message": "Removed link"}, 201
+
 
 class NewsArticleLinksResource(Resource):
     """Resource endpoint for news article/scientific paper links"""
 
     reqparser = reqparse.RequestParser()
     reqparser.add_argument("candidate_doi", type=str, required=True,
-                          help="You must provide DOI to link")
+                           help="You must provide DOI to link")
+    reqparser.add_argument('annotation_time', type=int, required=True, 
+                            help="You must say how long the annotation took in milliseconds")
 
     @marshal_with(paper_fields)
     @auth_token_required
@@ -176,17 +236,42 @@ class NewsArticleLinksResource(Resource):
         if article is None:
             abort(404)
 
-        return link_news_candidate(article, args.candidate_doi)
+        return link_news_candidate(article, args.candidate_doi, args.annotation_time)
 
     @marshal_with(paper_fields)
     def get(self, article_id):
         """Return a list of papers and their dois linked to this article"""
         article = NewsArticle.query.get(article_id)
-
+        # if the article isn't valid then fail
         if article is None:
             abort(404)
 
-        return article.papers
+        papers = ScientificPaper.query.join(ArticlePaper)\
+            .filter( ArticlePaper.article_id == article_id)
+        
+        if current_app.config.get('REVIEW_PROCESS_ENABLED', True):
+            min_iaa_users = current_app.config.get('REVIEW_MIN_IAA', 3)
+        else:
+            min_iaa_users = 1
+
+        # check that the links were created by the current user
+        if current_user.is_authenticated:
+            papers = papers.filter(ArticlePaper.user_id == current_user.id)
+        else:
+            papers = papers.filter(ArticlePaper.user_id == None)
+
+        # union results with links that have more than annotations
+        linked_iaa = db.session.query(ArticlePaper.paper_id)\
+            .filter(ArticlePaper.article_id == article_id)\
+            .group_by(ArticlePaper.article_id, ArticlePaper.paper_id)\
+            .having(func.count(ArticlePaper.article_id)>=min_iaa_users)
+
+        papers = papers.union(ScientificPaper.query.filter(ScientificPaper.id.in_(linked_iaa)))
+
+        # finally return the papers
+        papers = papers.all()
+
+        return papers
 
 
 class NewsArticleCandidatePapers(Resource):
@@ -204,8 +289,8 @@ class NewsArticleCandidatePapers(Resource):
         if article is None:
             abort(404)
 
-        #find_candidate_papers(article)
+        # find_candidate_papers(article)
 
         use_cache = args.cached == "true"
 
-        return {"candidate":find_candidate_papers(article, use_cache)}
+        return {"candidate": find_candidate_papers(article, use_cache)}

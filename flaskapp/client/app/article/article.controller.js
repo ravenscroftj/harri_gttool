@@ -7,7 +7,7 @@
     .controller('ArticleController', ArticleController);
 
   /* @ngInject */
-  function ArticleController($scope, $state, $sce, defaultTitle, newsService) {
+  function ArticleController($scope, $state, $interval, $sce, $mdDialog, defaultTitle, newsService) {
     var articleVm = this;
 
     articleVm.title = defaultTitle;
@@ -120,7 +120,10 @@
 
       }else{
 
-        promise = newsService.linkCandidate(article, candidate);
+        // store how long it took to annotate
+        var annoLength = new Date().getTime() - $scope.linkCounter.getTime();
+
+        promise = newsService.linkCandidate(article, candidate, annoLength);
 
       }
 
@@ -146,6 +149,9 @@
               //set source to mskg if not known
               $scope.candidates[i]['_source'] = "mskg";
             }
+
+            //reset the link timer
+            $scope.linkCounter = new Date();
 
             //finished (un)linking process
             $scope.linkingCandidate = false;
@@ -218,6 +224,42 @@
         });
     }
 
+    var linkCounterPromise = null;
+
+    /**
+     * Start the link timer which is used to work out how long it takes a user to make a link
+     */
+    function linkTimerStart(){
+      $scope.linkCounter = new Date();
+      console.log("Started annotation at " + $scope.linkCounter.toUTCString());
+
+      // if the link counter promise is already set, cancel it now
+      if(linkCounterPromise){
+        $interval.cancel(linkCounterPromise);
+      }
+
+      //set up a function to fire after 5 minutes that gives the option to reset
+      linkCounterPromise = $interval(function(){
+          console.log("Interval function triggered")
+
+          var confirm = $mdDialog.confirm()
+            .title('Reset annotation timer?')
+            .textContent('You have been trying to link this article for over 5 minutes. Are you still working or shall we reset the timer?')
+            .ok('Please reset the counter')
+            .cancel('I\'m still working, keep timing')
+
+          $mdDialog.show(confirm).then(function(){
+
+            console.log("User chose to reset timer");
+            $scope.linkCounter = new Date();
+
+          }, function(){
+            console.log("User chose to continue timing");
+          });
+
+      }, 5 * 60 * 1000);
+    }
+
     // Load local variables from the state (the URL of the page).
     function loadFromState() {
 
@@ -261,6 +303,9 @@
               }
             }
           }
+      })
+      .then(function(){
+        linkTimerStart();
       });
       console.log(result);
     }

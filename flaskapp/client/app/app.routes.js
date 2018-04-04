@@ -138,6 +138,19 @@
         }
       },
       {
+        state: 'main.news.review',
+        config: {
+          url:'/review',
+          views:{
+            "container@":{
+              templateUrl: '/media/build/news/news.html',
+              controller: 'NewsController as newsVm',
+            }
+          },
+          params: defineParams()
+        }
+      },
+      {
         state: 'main.news.spam',
         config: {
           url:'/spam',
