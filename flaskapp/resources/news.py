@@ -10,7 +10,7 @@ from flask_security import auth_token_required
 from flask_security.core import current_user, AnonymousUser
 
 from sqlalchemy.sql import select
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 
 from ..model import ScientificPaper, ArticlePaper
 from ..services.news import link_news_candidate
@@ -86,8 +86,6 @@ class NewsArticleListResource(Resource):
 
         
 
-
-
         # add query for getting articles that have are not passed IAA
         linked = db.session.query(ArticlePaper.article_id)\
             .filter(~ArticlePaper.user_id.in_(blacklisted_iaa_users))\
@@ -100,6 +98,8 @@ class NewsArticleListResource(Resource):
             .group_by(ArticlePaper.article_id)\
             .having(func.count(ArticlePaper.user_id.distinct()) >= min_iaa_users)
 
+
+
         # add select filters for hidden and spam states
         r = NewsArticle.query\
             .filter(NewsArticle.hidden == args.hidden)\
@@ -111,13 +111,16 @@ class NewsArticleListResource(Resource):
         # if linked then show all linked articles that the user is allowed to see
         if args.linked == "true":
 
-            r = r.filter(NewsArticle.id.in_(
-                linked_and_reviewed.union(userlist)))
+            r = r.join(ArticlePaper).filter(
+                or_(NewsArticle.do_iaa == False,
+                and_(NewsArticle.do_iaa == True, NewsArticle.id.in_(linked_and_reviewed.union(userlist)))
+                )
+            ).distinct(NewsArticle.id)
 
         # deal with review
         elif args.review == "true":
             # we want articles that have one or more links but that the user hasn't seen
-            r = r.filter(NewsArticle.id.in_(linked)).filter(
+            r = r.filter(NewsArticle.do_iaa == True).filter(NewsArticle.id.in_(linked)).filter(
                 ~NewsArticle.id.in_(userlist))
 
         # default case -show 'new' articles that need to be tagged - news has no ArticlePapers

@@ -89,6 +89,9 @@ class NewsArticle(db.Model):
     hidden = db.Column("hidden", db.Boolean, server_default='0')
 
     spam = db.Column("spam", db.Boolean, server_default='0')
+    
+    # boolean flag indicating that IAA should be carried out for this link
+    do_iaa = db.Column('do_iaa', db.Boolean)
 
     @property
     def hostname(self):
