@@ -1,5 +1,6 @@
 """News article rest resources"""
 
+import random
 import dateutil.parser
 
 from flask import current_app
@@ -235,6 +236,12 @@ class NewsArticleLinksResource(Resource):
         args = self.reqparser.parse_args()
 
         article = NewsArticle.query.get(article_id)
+
+        # there's a random chance that we make the news article an IAA article
+        
+
+        if random.randint(0,100) < 10:
+            article.do_iaa = True
 
         if article is None:
             abort(404)
