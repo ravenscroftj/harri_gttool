@@ -177,13 +177,14 @@ def get_papers_for_query(q):
         "expr": q,
         "attributes": "Ti,J.JN,Y,D,CIN,CC,AA.AuN,AA.AfN,AA.AuId,W,E"
     }
+    
 
     endpoint = "https://westus.api.cognitive.microsoft.com/academic/v1.0/evaluate"
     #endpoint = "https://westus.api.cognitive.microsoft.com/academic/v1.0/interpret"
 
     result = requests.post(endpoint, headers=headers, data=params)
 
-    print(result.json())
+    print("MSKG:",result.json())
 
     return result
 
@@ -240,7 +241,7 @@ def get_scopus_results(author, inst, pubdate):
 
 
 
-        query = "AUTHOR-NAME({name}) YEAR({year}) AFFIL({affil})"\
+        query = "AUTHOR-NAME({name}) PUBYEAR = {year} AFFIL({affil})"\
             .format(year=pubdate.strftime("%Y"),
                     name=lastname + "," + initial,
                     affil=inst)
@@ -255,7 +256,8 @@ def get_scopus_results(author, inst, pubdate):
         r = requests.get("https://api.elsevier.com/content/search/scopus",
                          params=params)
 
-        print(r.json())
+        print("query:", query)
+        print("SCOPUS:",r.json())
 
 
         if 'search-results' not in r.json():
