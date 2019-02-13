@@ -30,3 +30,7 @@ api.add_resource(SpamFilterResource, "/spamfilter")
 from .auth import SecureResource
 
 api.add_resource(SecureResource, "/securetest")
+
+from .corpus import CorpusResource
+
+api.add_resource(CorpusResource,"/corpus")
