@@ -114,7 +114,7 @@ class NewsArticleListResource(Resource):
 
             r = r.join(ArticlePaper).filter(
                 or_(NewsArticle.do_iaa == False,
-                and_(NewsArticle.do_iaa == True, NewsArticle.id.in_(linked_and_reviewed.union(userlist)))
+                #and_(NewsArticle.do_iaa == True, NewsArticle.id.in_(linked_and_reviewed.union(userlist)))
                 )
             ).distinct(NewsArticle.id)
 
@@ -262,6 +262,10 @@ class NewsArticleLinksResource(Resource):
         if current_app.config.get('REVIEW_PROCESS_ENABLED', True):
             min_iaa_users = current_app.config.get('REVIEW_MIN_IAA', 3)
         else:
+            min_iaa_users = 1
+
+        # if the article has do-iaa turned off then min_iaa_users is 1
+        if not article.do_iaa:
             min_iaa_users = 1
 
         # check that the links were created by the current user
