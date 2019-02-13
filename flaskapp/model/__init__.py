@@ -6,6 +6,9 @@ from urllib.parse import urlparse
 
 from flask_security import UserMixin, RoleMixin
 
+# role names
+ROLE_FULL_TEXT_ACCESS = "full_text_access"
+
 
 db = SQLAlchemy()
 

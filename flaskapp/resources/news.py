@@ -13,10 +13,8 @@ from flask_security.core import current_user, AnonymousUser
 from sqlalchemy.sql import select
 from sqlalchemy import func, and_, or_
 
-from ..model import ScientificPaper, ArticlePaper
+from ..model import ScientificPaper, ArticlePaper, ROLE_FULL_TEXT_ACCESS
 from ..services.news import link_news_candidate
-
-ROLE_FULL_TEXT_ACCESS = "full_text_access"
 
 article_fields = {
     "id": fields.Integer(),
