@@ -3,7 +3,6 @@ env/
 dist/
 build/
 compile/
-cache/
 node_modules/
 *.py[co]
 server.cfg
