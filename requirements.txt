@@ -81,7 +81,7 @@ tqdm==4.19.5
 ujson==1.35
 Unidecode==1.0.22
 uritemplate==3.0.0
-urllib3==1.22
+urllib3==1.26.5
 wcwidth==0.1.7
 webencodings==0.5.1
 webstruct==0.6
